@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/locationsFragment"
+        android:enabled="true"
+        android:icon="@drawable/locations_icon"
+        android:title="@string/locations" />
+    <item
+        android:id="@+id/charactersFragment"
+        android:enabled="true"
+        android:icon="@drawable/characters_icon"
+        android:title="@string/characters" />
+    <item
+        android:id="@+id/episodesFragment"
+        android:enabled="true"
+        android:icon="@drawable/episodes_icon"
+        android:title="@string/episodes" />
+</menu>
