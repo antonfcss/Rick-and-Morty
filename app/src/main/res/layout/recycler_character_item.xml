@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/background_toolbar_ba"
+    app:cardCornerRadius="10dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/avatarImageView"
+            android:layout_width="115dp"
+            android:layout_height="118dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/rectangle_avatar"
+            app:layout_constraintEnd_toEndOf="@+id/constraint"
+            app:layout_constraintStart_toStartOf="@+id/constraint"
+            app:layout_constraintTop_toTopOf="@+id/constraint"
+            android:src="@drawable/rick_avatar" />
+
+
+        <TextView
+            android:id="@+id/nameTextView"
+            style="@style/MyTextStyle.blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Rick Sanchez"
+            app:layout_constraintStart_toStartOf="@id/constraint"
+            app:layout_constraintTop_toBottomOf="@id/avatarImageView" />
+
+        <TextView
+            android:id="@+id/speciesTextView"
+            style="@style/MyTextStyle.grey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:text="Human"
+            app:layout_constraintStart_toStartOf="@+id/constraint"
+            app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+
+        <TextView
+            android:id="@+id/statusTextView"
+            style="@style/MyTextStyle.grey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="22dp"
+            android:text="Live"
+            app:layout_constraintStart_toEndOf="@+id/speciesTextView"
+            app:layout_constraintTop_toTopOf="@+id/speciesTextView" />
+
+        <TextView
+            android:id="@+id/genderTextView"
+            style="@style/MyTextStyle.grey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="Male"
+            app:layout_constraintBottom_toBottomOf="@+id/constraint"
+            app:layout_constraintStart_toStartOf="@+id/constraint"
+            app:layout_constraintTop_toBottomOf="@+id/speciesTextView" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.cardview.widget.CardView>

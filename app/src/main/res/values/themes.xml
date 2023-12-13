@@ -3,6 +3,7 @@
     <style name="Base.Theme.RickMorty" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/background_toolbar_ba</item>
     </style>
 
     <style name="Theme.RickMorty" parent="Base.Theme.RickMorty" />
