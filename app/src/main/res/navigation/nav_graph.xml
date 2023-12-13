@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graw">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graw"
+    app:startDestination="@id/charactersFragment">
 
+    <fragment
+        android:id="@+id/charactersFragment"
+        android:name="com.example.rickmorty.presentation.characters.CharactersFragment"
+        android:label="CharactersFragment"
+        tools:layout="@layout/characters_fragment" />
 </navigation>

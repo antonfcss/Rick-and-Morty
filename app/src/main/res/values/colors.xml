@@ -6,4 +6,6 @@
     <color name="background_toolbar_ba">#1C1C1C</color>
     <color name="green">#00C72C</color>
     <color name="grey">#C1C1C1</color>
+    <color name="blue_text">#00AFC7</color>
+    <color name="yellow_text">#D9E504</color>
 </resources>

@@ -3,4 +3,13 @@
     <string name="locations">Locations</string>
     <string name="characters">Characters</string>
     <string name="episodes">Episodes</string>
+    <string name="details">Details:</string>
+    <string name="origin">Origin:</string>
+    <string name="location">Location:</string>
+    <string name="episode">Episode: %s </string>
+    <string name="air_data">Air Data: %s</string>
+    <string name="type">Type: %s</string>
+    <string name="dimension">Dimension: %s</string>
+    <string name="status">Status</string>
+    <string name="gender">Gender</string>
 </resources>
