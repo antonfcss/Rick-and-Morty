@@ -45,8 +45,8 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            app:layout_constraintBottom_toBottomOf="@+id/constraint"
             android:text="@string/air_data"
+            app:layout_constraintBottom_toBottomOf="@+id/constraint"
             app:layout_constraintStart_toStartOf="@+id/constraint"
             app:layout_constraintTop_toBottomOf="@+id/numberEpisodeTextView" />
 
