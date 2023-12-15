@@ -10,4 +10,5 @@
         android:name="com.example.rickmorty.presentation.characters.CharactersFragment"
         android:label="CharactersFragment"
         tools:layout="@layout/characters_fragment" />
+
 </navigation>

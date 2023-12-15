@@ -69,8 +69,8 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<State>, State> 
 
     abstract fun renderSuccessState(viewState: ViewState.Success<State>)
 
-    abstract fun renderErrorState(viewState: ViewState.Error)
+    private fun renderErrorState(viewState: ViewState.Error) {}
 
-    abstract fun renderLoadingState(viewState: ViewState.Loading)
+    private fun renderLoadingState(viewState: ViewState.Loading) {}
 
 }
