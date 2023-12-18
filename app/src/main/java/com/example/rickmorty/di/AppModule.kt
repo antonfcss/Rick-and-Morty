@@ -4,12 +4,15 @@ package com.example.rickmorty.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import com.example.rickmorty.data.characters.local.RickAndMortyDatabase
+import com.example.rickmorty.data.RickAndMortyDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -32,4 +35,15 @@ object AppModule {
     @Singleton
     @Provides
     fun provideCharactersDao(db: RickAndMortyDatabase) = db.characterDao()
+
+    @Singleton
+    @Provides
+    fun provideLocationsDao(db: RickAndMortyDatabase) = db.locationDao()
+
+    @Provides
+    @Singleton
+    fun provideCoroutineScope(): CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+
 }

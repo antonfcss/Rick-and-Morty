@@ -3,16 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container_nav"
-    app:startDestination="@id/splashFragment">
-    <fragment
-        android:id="@+id/splashFragment"
-        android:name="com.example.rickmorty.presentation.SplashFragment"
-        android:label="SplashFragment"
-        tools:layout="@layout/splash_fragment">
-        <action
-            android:id="@+id/action_splashFragment_to_containerFragment"
-            app:destination="@id/containerFragment" />
-    </fragment>
+    app:startDestination="@id/containerFragment">
+
     <fragment
         android:id="@+id/containerFragment"
         android:name="com.example.rickmorty.presentation.ContainerFragment"

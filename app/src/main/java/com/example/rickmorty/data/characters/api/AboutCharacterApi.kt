@@ -1,8 +1,8 @@
-package com.example.rickmorty.data.characters.api.entities
+package com.example.rickmorty.data.characters.api
 
 import com.google.gson.annotations.SerializedName
 
-data class CharactersApiModel(
+data class AboutCharacterApi(
     @SerializedName("id")
     val id: Int,
     @SerializedName("name")
@@ -16,9 +16,9 @@ data class CharactersApiModel(
     @SerializedName("gender")
     val gender: String,
     @SerializedName("origin")
-    val origin: Origin,
+    val originApi: OriginApi,
     @SerializedName("location")
-    val location: Location,
+    val locationApi: LocationApi,
     @SerializedName("image")
     val image: String,
     @SerializedName("episode")

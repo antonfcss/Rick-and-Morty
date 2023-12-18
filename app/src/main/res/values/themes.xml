@@ -4,7 +4,14 @@
         <!-- Customize your light theme here. -->
         <item name="android:windowBackground">@color/background</item>
         <item name="android:statusBarColor">@color/background_toolbar_ba</item>
+
     </style>
 
     <style name="Theme.RickMorty" parent="Base.Theme.RickMorty" />
+
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splashscreen_logo</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.RickMorty</item>
+    </style>
 </resources>

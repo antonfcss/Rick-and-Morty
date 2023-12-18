@@ -1,8 +1,8 @@
-package com.example.rickmorty.data.characters.api.entities
+package com.example.rickmorty.data.characters.api
 
 import com.google.gson.annotations.SerializedName
 
-data class Origin(
+data class OriginApi(
     @SerializedName("name")
     val originName: String,
     @SerializedName("url")

@@ -36,14 +36,14 @@
             app:layout_constraintTop_toBottomOf="@+id/locationNameTextView" />
 
         <TextView
-            android:id="@+id/airDataEpisodeTextView"
+            android:id="@+id/dimensionTextView"
             style="@style/MyTextStyle.grey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:text="@string/air_data"
+            android:text="@string/dimension"
             app:layout_constraintBottom_toBottomOf="@+id/constraint"
             app:layout_constraintStart_toStartOf="@+id/constraint"
             app:layout_constraintTop_toBottomOf="@+id/typeTextView" />

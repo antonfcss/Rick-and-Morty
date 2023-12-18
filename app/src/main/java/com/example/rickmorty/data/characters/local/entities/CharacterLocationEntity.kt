@@ -1,6 +1,6 @@
 package com.example.rickmorty.data.characters.local.entities
 
-data class LocationEntity(
+data class CharacterLocationEntity(
     val name: String,
     val url: String
 )
