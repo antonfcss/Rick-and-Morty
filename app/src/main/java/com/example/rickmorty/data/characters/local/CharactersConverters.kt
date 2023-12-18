@@ -1,8 +1,8 @@
 package com.example.rickmorty.data.characters.local
 
 import androidx.room.TypeConverter
+import com.example.rickmorty.data.characters.local.entities.CharacterEpisodesEntity
 import com.example.rickmorty.data.characters.local.entities.CharacterLocationEntity
-import com.example.rickmorty.data.characters.local.entities.EpisodesEntity
 import com.example.rickmorty.data.characters.local.entities.OriginEntity
 import com.google.gson.Gson
 
@@ -36,16 +36,16 @@ class CharactersConverters {
     }
 
     @TypeConverter
-    fun fromEpisodesEntity(episodes: String): EpisodesEntity {
+    fun fromEpisodesEntity(episodes: String): CharacterEpisodesEntity {
         val gson = Gson()
-        val entity = gson.fromJson(episodes, EpisodesEntity::class.java)
+        val entity = gson.fromJson(episodes, CharacterEpisodesEntity::class.java)
         return entity
     }
 
     @TypeConverter
-    fun toEpisodesEntity(episodesEntity: EpisodesEntity): String {
+    fun toEpisodesEntity(characterEpisodesEntity: CharacterEpisodesEntity): String {
         val gson = Gson()
-        val json = gson.toJson(episodesEntity)
+        val json = gson.toJson(characterEpisodesEntity)
         return json
     }
 

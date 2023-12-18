@@ -17,8 +17,8 @@ import com.example.rickmorty.data.InternetManager
 import com.example.rickmorty.data.RickAndMortyApi
 import com.example.rickmorty.data.characters.local.CharactersDao
 import com.example.rickmorty.data.characters.local.entities.CharacterEntity
+import com.example.rickmorty.data.characters.local.entities.CharacterEpisodesEntity
 import com.example.rickmorty.data.characters.local.entities.CharacterLocationEntity
-import com.example.rickmorty.data.characters.local.entities.EpisodesEntity
 import com.example.rickmorty.data.characters.local.entities.OriginEntity
 import com.example.rickmorty.domain.characters.CharactersModel
 import com.example.rickmorty.domain.characters.LocationModel
@@ -95,7 +95,7 @@ class CharactersPagingSource @Inject constructor(
                                                 url = charactersApiModel.location.url
                                             ),
                                             image = path,
-                                            episode = EpisodesEntity(charactersApiModel.episode),
+                                            episode = CharacterEpisodesEntity(charactersApiModel.episode),
                                         )
                                     })
                                 }

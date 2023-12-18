@@ -40,6 +40,10 @@ object AppModule {
     @Provides
     fun provideLocationsDao(db: RickAndMortyDatabase) = db.locationDao()
 
+    @Singleton
+    @Provides
+    fun provideEpisodesDao(db: RickAndMortyDatabase) = db.episodesDao()
+
     @Provides
     @Singleton
     fun provideCoroutineScope(): CoroutineScope =
