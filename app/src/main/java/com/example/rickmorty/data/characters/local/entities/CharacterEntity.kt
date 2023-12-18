@@ -15,5 +15,5 @@ data class CharacterEntity(
     val origin: OriginEntity,
     val location: CharacterLocationEntity,
     val image: String,
-    val episode: EpisodesEntity
+    val episode: CharacterEpisodesEntity
 )

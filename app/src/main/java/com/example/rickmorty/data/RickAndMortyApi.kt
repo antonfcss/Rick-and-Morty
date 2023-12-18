@@ -2,6 +2,7 @@ package com.example.rickmorty.data
 
 import com.example.rickmorty.data.characters.api.AboutCharacterApi
 import com.example.rickmorty.data.characters.api.CharactersApiResponse
+import com.example.rickmorty.data.episodes.api.EpisodesApiResponse
 import com.example.rickmorty.data.locations.api.AboutLocationApi
 import com.example.rickmorty.data.locations.api.LocationsApiResponse
 import retrofit2.Response
@@ -16,6 +17,9 @@ interface RickAndMortyApi {
 
     @GET("api/location")
     suspend fun getLocationsList(@Query("page") page: Int): Response<LocationsApiResponse>
+
+    @GET("api/episode")
+    suspend fun getEpisodesList(@Query("page") page: Int): Response<EpisodesApiResponse>
 
     @GET("api/character/{id}")
     suspend fun getAboutCharacter(@Path(value = "id") id: Int): Response<AboutCharacterApi>

@@ -26,7 +26,6 @@ class LocationsViewModel @Inject constructor(private val locationUseCase: Locati
                             name = locationsModel.name,
                             type = locationsModel.type,
                             dimension = locationsModel.dimension,
-                            residents = locationsModel.residents
                         )
                     }
 
