@@ -1,4 +1,4 @@
-package com.example.rickmorty.data.characters.api.entities
+package com.example.rickmorty.data.characters.api
 
 import com.google.gson.annotations.SerializedName
 

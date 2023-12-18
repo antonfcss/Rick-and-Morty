@@ -1,0 +1,12 @@
+package com.example.rickmorty.data.locations.api
+
+import com.google.gson.annotations.SerializedName
+
+data class Info(
+    @SerializedName("count")
+    val count: Int,
+    @SerializedName("next")
+    val next: String,
+    @SerializedName("pages")
+    val pages: Int,
+)

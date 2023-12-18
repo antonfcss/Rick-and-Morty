@@ -21,7 +21,7 @@
             android:layout_marginTop="10dp"
             android:adjustViewBounds="true"
             android:background="@drawable/rectangle_avatar"
-            android:src="@drawable/rick_avatar"
+            android:src="@drawable/placeholder_image"
             app:layout_constraintEnd_toEndOf="@+id/constraint"
             app:layout_constraintStart_toStartOf="@+id/constraint"
             app:layout_constraintTop_toTopOf="@+id/constraint" />

@@ -2,17 +2,11 @@ package com.example.rickmorty.presentation.characters.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.paging.PagingDataAdapter
 import com.example.rickmorty.databinding.RecyclerCharacterItemBinding
 
-class CharactersAdapter() : RecyclerView.Adapter<CharactersViewHolder>() {
-    private val characterItem = arrayListOf<CharactersUiModel>()
-
-    fun setData(charactersList: List<CharactersUiModel>) {
-        characterItem.clear()
-        characterItem.addAll(charactersList)
-        notifyDataSetChanged()
-    }
+class CharactersAdapter() :
+    PagingDataAdapter<CharactersUiModel, CharactersViewHolder>(CharactersDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharactersViewHolder {
         return CharactersViewHolder(
@@ -24,9 +18,7 @@ class CharactersAdapter() : RecyclerView.Adapter<CharactersViewHolder>() {
         )
     }
 
-    override fun getItemCount(): Int = characterItem.size
-
     override fun onBindViewHolder(holder: CharactersViewHolder, position: Int) {
-        holder.bind(characterItem[position])
+        getItem(position)?.let { holder.bind(it) }
     }
 }

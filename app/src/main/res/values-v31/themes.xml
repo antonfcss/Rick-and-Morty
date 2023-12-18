@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="android:windowSplashScreenBackground">@color/background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">
+            @drawable/ic_splashscreen_logo_animated
+        </item>
+        <item name="android:windowSplashScreenAnimationDuration">1500</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.RickMorty</item>
+        <item name="android:windowSplashScreenBrandingImage">
+            @drawable/ic_splashscreen_branding_centered
+        </item>
+    </style>
+</resources>

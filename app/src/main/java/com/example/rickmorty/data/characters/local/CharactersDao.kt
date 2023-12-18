@@ -11,8 +11,8 @@ interface CharactersDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(characterEntity: List<CharacterEntity>)
 
-    @Query("SELECT * FROM character")
-    fun getAll(): List<CharacterEntity>
+    @Query("SELECT * FROM character ORDER BY name ASC LIMIT :limit OFFSET :offset")
+    fun getPagingList(limit: Int, offset: Int): List<CharacterEntity>
 
 
 }

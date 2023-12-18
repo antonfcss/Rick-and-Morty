@@ -26,7 +26,7 @@ class ContainerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val navContainer =
-            childFragmentManager.findFragmentById(R.id.container_nav)?.findNavController()
+            childFragmentManager.findFragmentById(R.id.navGraphContainer)?.findNavController()
         navContainer?.let { binding.bottomNavigation.setupWithNavController(it) }
         binding.bottomNavigation.selectedItemId = R.id.charactersFragment
     }

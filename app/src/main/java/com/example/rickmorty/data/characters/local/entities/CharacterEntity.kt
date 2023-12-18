@@ -13,7 +13,7 @@ data class CharacterEntity(
     val type: String,
     val gender: String,
     val origin: OriginEntity,
-    val location: LocationEntity,
+    val location: CharacterLocationEntity,
     val image: String,
-    val episode: EpisodesEntity,
+    val episode: EpisodesEntity
 )
