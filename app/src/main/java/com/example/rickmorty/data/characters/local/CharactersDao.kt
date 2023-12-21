@@ -11,8 +11,16 @@ interface CharactersDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(characterEntity: List<CharacterEntity>)
 
-    @Query("SELECT * FROM character ORDER BY name ASC LIMIT :limit OFFSET :offset")
-    fun getPagingList(limit: Int, offset: Int): List<CharacterEntity>
+    @Query("SELECT * FROM character ORDER BY id ASC")
+    fun getPagingList(): List<CharacterEntity>
 
+    @Query("SELECT * FROM character WHERE name LIKE :name ORDER BY id ASC")
+    fun searchByName(name: String): List<CharacterEntity>
+
+    @Query("SELECT * FROM character WHERE status LIKE :status ORDER BY id ASC")
+    fun searchByStatus(status: String): List<CharacterEntity>
+
+    @Query("SELECT * FROM character WHERE species LIKE :species ORDER BY id ASC")
+    fun searchBySpecies(species: String): List<CharacterEntity>
 
 }

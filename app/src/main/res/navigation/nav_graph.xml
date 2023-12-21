@@ -9,7 +9,11 @@
         android:id="@+id/charactersFragment"
         android:name="com.example.rickmorty.presentation.characters.CharactersFragment"
         android:label="CharactersFragment"
-        tools:layout="@layout/characters_fragment" />
+        tools:layout="@layout/characters_fragment">
+        <action
+            android:id="@+id/action_charactersFragment_to_aboutCharacterFragment"
+            app:destination="@id/aboutCharacterFragment" />
+    </fragment>
     <fragment
         android:id="@+id/locationsFragment"
         android:name="com.example.rickmorty.presentation.locations.LocationsFragment"
@@ -20,5 +24,10 @@
         android:name="com.example.rickmorty.presentation.episodes.EpisodesFragment"
         android:label="EpisodesFragment"
         tools:layout="@layout/episodes_fragment" />
+    <fragment
+        android:id="@+id/aboutCharacterFragment"
+        android:name="com.example.rickmorty.presentation.characters.aboutCharacter.AboutCharacterFragment"
+        android:label="AboutCharacterFragment"
+        tools:layout="@layout/about_character_fragment" />
 
 </navigation>

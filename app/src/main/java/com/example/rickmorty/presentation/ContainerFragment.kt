@@ -29,6 +29,7 @@ class ContainerFragment : Fragment() {
             childFragmentManager.findFragmentById(R.id.navGraphContainer)?.findNavController()
         navContainer?.let { binding.bottomNavigation.setupWithNavController(it) }
         binding.bottomNavigation.selectedItemId = R.id.charactersFragment
+
     }
 
 }
