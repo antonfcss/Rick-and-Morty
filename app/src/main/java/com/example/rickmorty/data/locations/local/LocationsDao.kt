@@ -12,6 +12,15 @@ interface LocationsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(locationEntity: List<LocationEntity>)
 
-    @Query("SELECT * FROM locations ORDER BY name ASC LIMIT :limit OFFSET :offset")
-    fun getPagingList(limit: Int, offset: Int): List<LocationEntity>
+    @Query("SELECT * FROM locations ORDER BY id ASC")
+    fun getPagingList(): List<LocationEntity>
+
+    @Query("SELECT * FROM locations WHERE name LIKE :name ORDER BY id ASC")
+    fun searchByName(name: String): List<LocationEntity>
+
+    @Query("SELECT * FROM locations WHERE type LIKE :type ORDER BY id ASC")
+    fun searchByType(type: String): List<LocationEntity>
+
+    @Query("SELECT * FROM locations WHERE dimension LIKE :dimension ORDER BY id ASC")
+    fun searchByDimension(dimension: String): List<LocationEntity>
 }

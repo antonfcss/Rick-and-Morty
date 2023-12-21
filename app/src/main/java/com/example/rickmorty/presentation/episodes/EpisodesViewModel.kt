@@ -5,6 +5,7 @@ import androidx.paging.map
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.domain.episodes.EpisodesUseCase
+import com.example.rickmorty.presentation.episodes.dialog.EpisodeFilters
 import com.example.rickmorty.presentation.episodes.recycler.EpisodesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -14,9 +15,29 @@ import javax.inject.Inject
 @HiltViewModel
 class EpisodesViewModel @Inject constructor(private val episodesUseCase: EpisodesUseCase) :
     BaseViewModel<EpisodesState>() {
+    private var filterState = EpisodeFilters.NAME
+    fun getFilter(): EpisodeFilters {
+        return filterState
+    }
+
+    fun setFilter(filter: EpisodeFilters) {
+        filterState = filter
+    }
+
     fun getEpisodesList() {
+        loadEpisodesList(name = null, episode = null)
+    }
+
+    fun getEpisodesListByQuery(searchText: String) {
+        loadEpisodesList(
+            name = searchText.takeIf { filterState == EpisodeFilters.NAME },
+            episode = searchText.takeIf { filterState == EpisodeFilters.EPISODE },
+        )
+    }
+
+    private fun loadEpisodesList(name: String?, episode: String?) {
         launchIO {
-            episodesUseCase.getPagingEpisodes()
+            episodesUseCase.getPagingEpisodes(name = name, episode = episode)
                 .catch { Log.d("EpisodesViewModel", it.message.toString()) }
                 .map { pagingData ->
                     pagingData.map { episodesModel ->
@@ -28,7 +49,15 @@ class EpisodesViewModel @Inject constructor(private val episodesUseCase: Episode
                         )
                     }
                 }
-                .collect { episodesList -> updateState(ViewState.Success(EpisodesState(episodesList))) }
+                .collect { episodesList ->
+                    updateState(
+                        ViewState.Success(
+                            EpisodesState(
+                                episodesList
+                            )
+                        )
+                    )
+                }
         }
     }
 }

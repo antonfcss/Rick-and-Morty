@@ -2,7 +2,7 @@ package com.example.rickmorty.data.characters.api
 
 import com.google.gson.annotations.SerializedName
 
-data class AboutCharacterApi(
+data class AboutCharacterApiModel(
     @SerializedName("id")
     val id: Int,
     @SerializedName("name")

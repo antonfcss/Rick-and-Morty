@@ -17,6 +17,8 @@ import com.example.rickmorty.domain.characters.LocationModel
 import com.example.rickmorty.domain.characters.OriginModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.io.FileInputStream
@@ -33,36 +35,85 @@ class CharactersListRepository @Inject constructor(
 
 ) {
 
-    fun getPagingCharacters(): Flow<PagingData<CharactersModel>> {
-        return Pager(config = PagingConfig(pageSize = 2, enablePlaceholders = false),
-            pagingSourceFactory = { charactersPagingSource.getPagingCharacters() }).flow.cachedIn(
-            scope
-        )
+    fun getPagingCharacters(
+        name: String?,
+        status: String?,
+        species: String?,
+    ): Flow<PagingData<CharactersModel>> {
+        if (internetManager.isInternetConnected()) {
+            return Pager(config = PagingConfig(pageSize = 2, enablePlaceholders = false),
+                pagingSourceFactory = {
+                    charactersPagingSource.getPagingCharacters(
+                        name = name,
+                        status = status,
+                        species = species
+                    )
+                }).flow.cachedIn(
+                scope
+            )
+        } else {
+            val filteredCharactersList = {
+                when {
+                    name != null -> charactersDao.searchByName(name)
+                    status != null -> charactersDao.searchByStatus(status)
+                    species != null -> charactersDao.searchBySpecies(species)
+                    else -> charactersDao.getPagingList()
+                }
+            }.asFlow()
+            return filteredCharactersList.flatMapConcat { characterEntities ->
+                flow {
+                    emit(
+                        PagingData.from(characterEntities.map { characterEntity ->
+                            CharactersModel(
+                                id = characterEntity.id,
+                                name = characterEntity.name,
+                                status = characterEntity.status,
+                                species = characterEntity.species,
+                                type = characterEntity.type,
+                                gender = characterEntity.gender,
+                                origin = OriginModel(
+                                    name = characterEntity.origin.name,
+                                    id = characterEntity.origin.id,
+                                ),
+                                location = LocationModel(
+                                    name = characterEntity.location.name,
+                                    id = characterEntity.location.id
+                                ),
+                                image = loadImageFromStorage(characterEntity.id),
+                                episode = characterEntity.episode.episodesList
+                            )
+                        })
+                    )
+                }
+            }
+
+        }
     }
 
     suspend fun getAboutCharacterFromApi(id: Int): Flow<CharactersModel> {
         return flow {
-            val apiAboutCharacter = api.getAboutCharacter(id).body()!!
-            val characterModel = CharactersModel(
-                id = apiAboutCharacter.id,
-                name = apiAboutCharacter.name,
-                status = apiAboutCharacter.status,
-                species = apiAboutCharacter.species,
-                type = apiAboutCharacter.type,
-                gender = apiAboutCharacter.gender,
-                origin = OriginModel(
-                    name = apiAboutCharacter.originApi.originName,
-                    url = apiAboutCharacter.originApi.url
-                ),
-                location = LocationModel(
-                    name = apiAboutCharacter.locationApi.locationName,
-                    url = apiAboutCharacter.locationApi.url
-                ),
-                image = loadImageFromStorage(id),
-                episode = apiAboutCharacter.episode
+            val apiAboutCharacter = api.getAboutCharacter(id)
+            emit(
+                CharactersModel(
+                    id = apiAboutCharacter.id,
+                    name = apiAboutCharacter.name,
+                    status = apiAboutCharacter.status,
+                    species = apiAboutCharacter.species,
+                    type = apiAboutCharacter.type,
+                    gender = apiAboutCharacter.gender,
+                    origin = OriginModel(
+                        name = apiAboutCharacter.originApi.originName,
+                        id = apiAboutCharacter.locationApi.url.substringAfterLast('/').toInt()
+                    ),
+                    location = LocationModel(
+                        name = apiAboutCharacter.locationApi.locationName,
+                        id = apiAboutCharacter.locationApi.url.substringAfterLast('/').toInt()
+                    ),
+                    image = loadImageFromStorage(id),
+                    episode = apiAboutCharacter.episode.map { it.substringAfterLast('/').toInt() }
+                )
             )
         }
-
     }
 
     private fun loadImageFromStorage(id: Int): Bitmap {
@@ -75,142 +126,4 @@ class CharactersListRepository @Inject constructor(
                 ?: Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565)
         }
     }
-//    suspend fun getCharactersList() = flow {
-//        if (internetManager.isInternetConnected()) {
-//            emit(getDataFromApi())
-//        } else {
-//            emit(getDataFromDatabase())
-//        }
-//    }
-
-
-//    private suspend fun getDataFromApi(): List<CharactersModel> {
-//        val apiCharactersModelList =
-//            api.getCharacterList().charactersResultsList
-//        val charactersModelList = apiCharactersModelList.map { charactersApiModel ->
-//            CharactersModel(
-//                id = charactersApiModel.id,
-//                name = charactersApiModel.name,
-//                status = charactersApiModel.status,
-//                species = charactersApiModel.species,
-//                type = charactersApiModel.type,
-//                gender = charactersApiModel.gender,
-//                origin = OriginModel(
-//                    name = charactersApiModel.origin.originName,
-//                    url = charactersApiModel.origin.url,
-//                ),
-//                location = LocationModel(
-//                    name = charactersApiModel.location.locationName,
-//                    url = charactersApiModel.location.url
-//                ),
-//                image = getImageFromRemote(context, charactersApiModel.image),
-//                episode = charactersApiModel.episode
-//            )
-//        }
-//        charactersDao.insertAll(charactersModelList.map { charactersApiModel ->
-//            val path = saveToInternalStorage(charactersApiModel.image, charactersApiModel.id ?: 0)
-//            CharacterEntity(
-//                id = charactersApiModel.id ?: 0,
-//                name = charactersApiModel.name,
-//                status = charactersApiModel.status,
-//                species = charactersApiModel.species,
-//                type = charactersApiModel.type,
-//                gender = charactersApiModel.gender,
-//                origin = OriginEntity(
-//                    name = charactersApiModel.origin.name,
-//                    url = charactersApiModel.origin.url
-//                ),
-//                location = LocationEntity(
-//                    name = charactersApiModel.location.name,
-//                    url = charactersApiModel.location.url
-//                ),
-//                image = path,
-//                episode = EpisodesEntity(charactersApiModel.episode),
-//            )
-//        })
-//        return charactersModelList
-//    }
-//
-//    private suspend fun getDataFromDatabase(): List<CharactersModel> {
-//        return charactersDao.getPagingList().map { characterEntity ->
-//            CharactersModel(
-//                id = characterEntity.id,
-//                name = characterEntity.name,
-//                status = characterEntity.status,
-//                species = characterEntity.species,
-//                type = characterEntity.type,
-//                gender = characterEntity.gender,
-//                origin = OriginModel(
-//                    name = characterEntity.origin.name,
-//                    url = characterEntity.origin.url,
-//                ),
-//                location = LocationModel(
-//                    name = characterEntity.location.name, url = characterEntity.location.url
-//                ),
-//                image = loadImageFromStorage(characterEntity.id),
-//                episode = characterEntity.episode.episodesList,
-//            )
-//        }
-//    }
-//
-//    private fun saveToInternalStorage(bitmapImage: Bitmap, id: Int): String {
-//        val directory: File = context.getDir("imageDir", Context.MODE_PRIVATE)
-//        val myPath = File(directory, "$id.jpg")
-//        var fileOutputStream: FileOutputStream? = null
-//        try {
-//            fileOutputStream = FileOutputStream(myPath)
-//            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        } finally {
-//            try {
-//                fileOutputStream?.close()
-//            } catch (e: IOException) {
-//                e.printStackTrace()
-//            }
-//        }
-//        return myPath.absolutePath
-//    }
-//
-//    private suspend fun getImageFromRemote(context: Context, frontImage: String): Bitmap {
-//        return withContext(Dispatchers.IO) {
-//            try {
-//                val requestOptions = RequestOptions()
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                val bitmap = Glide.with(context)
-//                    .applyDefaultRequestOptions(requestOptions)
-//                    .asBitmap()
-//                    .load(frontImage)
-//                    .submit()
-//                    .get()
-//                bitmap
-//            } catch (e: Exception) {
-//                Log.e("NewsRepository", "Error loading image: ${e.message}")
-//                null
-//            }
-//        } ?: run {
-//            val placeholderDrawable =
-//                ContextCompat.getDrawable(context, R.drawable.placeholder_image)
-//            val bitmap = Bitmap.createBitmap(
-//                placeholderDrawable!!.intrinsicWidth,
-//                placeholderDrawable.intrinsicHeight,
-//                Bitmap.Config.ARGB_8888
-//            )
-//            val canvas = Canvas(bitmap)
-//            placeholderDrawable.setBounds(0, 0, canvas.width, canvas.height)
-//            placeholderDrawable.draw(canvas)
-//            bitmap
-//        }
-//    }
-//
-//    private fun loadImageFromStorage(id: Int): Bitmap {
-//        return try {
-//            val path = "/data/data/${context.packageName}/app_imageDir/$id.jpg"
-//            val file = File(path)
-//            BitmapFactory.decodeStream(FileInputStream(file))
-//        } catch (e: FileNotFoundException) {
-//            BitmapFactory.decodeResource(context.resources, R.drawable.placeholder_image)
-//                ?: Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565)
-//        }
-//    }
 }

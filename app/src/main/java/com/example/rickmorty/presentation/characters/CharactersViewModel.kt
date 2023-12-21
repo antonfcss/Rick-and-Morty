@@ -5,6 +5,7 @@ import androidx.paging.map
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.domain.characters.CharactersUseCase
+import com.example.rickmorty.presentation.characters.dialog.CharacterFilters
 import com.example.rickmorty.presentation.characters.recycler.CharactersUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -15,9 +16,44 @@ import javax.inject.Inject
 class CharactersViewModel @Inject constructor(private val charactersUseCase: CharactersUseCase) :
     BaseViewModel<CharactersState>() {
 
+    private var filterState = CharacterFilters.NAME
+
+    fun getFilter(): CharacterFilters {
+        return filterState
+    }
+
+    fun setFilter(filter: CharacterFilters) {
+        filterState = filter
+    }
+
+
     fun getCharactersList() {
+        loadCharactersList(
+            name = null,
+            status = null,
+            species = null,
+        )
+    }
+
+    fun getCharactersListByQuery(searchText: String) {
+        loadCharactersList(
+            name = searchText.takeIf { filterState == CharacterFilters.NAME },
+            status = searchText.takeIf { filterState == CharacterFilters.STATUS },
+            species = searchText.takeIf { filterState == CharacterFilters.SPECIES },
+        )
+    }
+
+    private fun loadCharactersList(
+        name: String?,
+        status: String?,
+        species: String?,
+    ) {
         launchIO {
-            charactersUseCase.getPagingCharacters()
+            charactersUseCase.getPagingCharacters(
+                name = name,
+                status = status,
+                species = species,
+            )
                 .catch { Log.d("CharactersViewModel", it.message.toString()) }
                 .map { pagingData ->
                     pagingData.map { charactersModel ->

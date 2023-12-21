@@ -12,5 +12,5 @@ data class CharactersModel(
     val origin: OriginModel,
     val location: LocationModel,
     val image: Bitmap,
-    val episode: List<String>,
+    val episode: List<Int>,
 )

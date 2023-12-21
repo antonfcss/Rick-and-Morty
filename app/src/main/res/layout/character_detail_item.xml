@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="wrap_content">
 
     <ImageView
@@ -78,6 +79,16 @@
         android:text="Aliver"
         app:layout_constraintStart_toEndOf="@id/speciesTextView"
         app:layout_constraintTop_toTopOf="@id/speciesTextView" />
+
+    <TextView
+        android:id="@+id/typeTextView"
+        style="@style/MyTextStyle.grey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        app:layout_constraintStart_toEndOf="@id/genderTextView"
+        app:layout_constraintTop_toTopOf="@id/genderTextView"
+        tools:text="Type" />
 
     <TextView
         android:id="@+id/locationsTitleTextView"
