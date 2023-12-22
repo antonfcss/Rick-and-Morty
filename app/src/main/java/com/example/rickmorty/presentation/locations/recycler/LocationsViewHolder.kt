@@ -7,9 +7,13 @@ class LocationsViewHolder(private val binding: RecyclerLocationItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
 
-    fun bind(locationUiModel: LocationUiModel) {
-        binding.locationNameTextView.text = locationUiModel.name
-        binding.typeTextView.text = locationUiModel.type
-        binding.dimensionTextView.text = locationUiModel.dimension
+    fun bind(locationUiModel: LocationUiModel, clickListener: (Int) -> Unit) {
+        with(binding) {
+            locationNameTextView.text = locationUiModel.name
+            typeTextView.text = locationUiModel.type
+            dimensionTextView.text = locationUiModel.dimension
+            root.setOnClickListener { clickListener.invoke(locationUiModel.id) }
+        }
+
     }
 }

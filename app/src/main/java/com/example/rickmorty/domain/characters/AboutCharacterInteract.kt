@@ -2,6 +2,7 @@ package com.example.rickmorty.domain.characters
 
 import com.example.rickmorty.domain.episodes.EpisodesUseCase
 import com.example.rickmorty.domain.locations.LocationUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapConcat
@@ -11,15 +12,16 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
-class AboutCharacterInteractor @Inject constructor(
+class AboutCharacterInteract @Inject constructor(
     private val aboutCharacterUseCase: CharactersUseCase,
     private val aboutLocationUseCase: LocationUseCase,
     private val aboutEpisodeUseCase: EpisodesUseCase
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun getDetailAboutCharacter(id: Int): Flow<AboutCharacterModel> =
         aboutCharacterUseCase.getAboutCharacter(id)
             .flatMapConcat { characterModel ->
-                aboutLocationUseCase.getAboutLocation(characterModel.location.id)
+                aboutLocationUseCase.getAboutLocation(characterModel.location?.id ?: 0)
                     .zip(flowOf(characterModel)) { locations, character -> character to locations }
                     .flatMapConcat { pair ->
                         val episodes = pair.first.episode.asFlow().flatMapConcat { episodeId ->
@@ -39,8 +41,8 @@ class AboutCharacterInteractor @Inject constructor(
                     species = character.species,
                     type = character.type,
                     gender = character.gender,
-                    originName = character.name,
-                    originId = character.id,
+                    originName = character.origin?.name,
+                    originId = character.origin?.id,
                     locationName = location.name,
                     locationId = location.id,
                     image = character.image,

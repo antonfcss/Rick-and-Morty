@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.rickmorty.base.extractLastPartToInt
 import com.example.rickmorty.data.InternetManager
 import com.example.rickmorty.data.RickAndMortyApi
 import com.example.rickmorty.data.episodes.local.EpisodesDao
@@ -27,7 +28,7 @@ class EpisodesRepository @Inject constructor(
 
     fun getPagingEpisodes(name: String?, episode: String?): Flow<PagingData<EpisodesModel>> {
         if (internetManager.isInternetConnected()) {
-            return Pager(config = PagingConfig(pageSize = 2, enablePlaceholders = false),
+            return Pager(config = PagingConfig(pageSize = 20, enablePlaceholders = false),
                 pagingSourceFactory = {
                     episodesPagingSource.getPagingEpisodes(
                         name = name,
@@ -51,7 +52,7 @@ class EpisodesRepository @Inject constructor(
                             id = episodesEntity.id,
                             name = episodesEntity.name,
                             airDate = episodesEntity.airDate,
-                            episode = episodesEntity.episode,
+                            dateEpisode = episodesEntity.episode,
                             charactersList = episodesEntity.characters.charactersList
                         )
                     }))
@@ -69,8 +70,8 @@ class EpisodesRepository @Inject constructor(
                     id = apiAboutEpisode.id,
                     name = apiAboutEpisode.name,
                     airDate = apiAboutEpisode.airDate,
-                    episode = apiAboutEpisode.episode,
-                    charactersList = apiAboutEpisode.characters
+                    dateEpisode = apiAboutEpisode.episode,
+                    charactersList = apiAboutEpisode.characters.map { it.extractLastPartToInt() }
                 )
             )
         }

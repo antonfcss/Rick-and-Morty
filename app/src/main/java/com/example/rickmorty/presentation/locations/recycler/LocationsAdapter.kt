@@ -5,7 +5,9 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import com.example.rickmorty.databinding.RecyclerLocationItemBinding
 
-class LocationsAdapter :
+class LocationsAdapter(
+    private val onClick: (Int) -> Unit
+) :
     PagingDataAdapter<LocationUiModel, LocationsViewHolder>(LocationsDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationsViewHolder {
@@ -19,7 +21,7 @@ class LocationsAdapter :
     }
 
     override fun onBindViewHolder(holder: LocationsViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+        getItem(position)?.let { holder.bind(it, onClick) }
     }
 
 

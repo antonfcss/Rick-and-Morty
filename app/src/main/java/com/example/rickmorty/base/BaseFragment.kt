@@ -1,5 +1,6 @@
 package com.example.rickmorty.base
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -56,7 +57,21 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<State>, State> 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getEmptyDataLiveData().observe(viewLifecycleOwner, ::showEmptyDataDialog)
         viewModel.viewModelState.observe(viewLifecycleOwner, ::renderState)
+    }
+
+    private fun showEmptyDataDialog(error: String?) {
+        error?.let { noDataError ->
+            viewModel.onPostEmptyDataDialogShown()
+            AlertDialog.Builder(requireContext()).setTitle("No data were received")
+                .setMessage(noDataError)
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+        }
     }
 
     private fun renderState(viewState: ViewState<State>) {

@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.rickmorty.base.BaseSource
 import com.example.rickmorty.base.Results
+import com.example.rickmorty.base.extractLastPartToIntOrZero
 import com.example.rickmorty.data.RickAndMortyApi
 import com.example.rickmorty.data.locations.local.LocationsDao
 import com.example.rickmorty.data.locations.local.entities.LocationEntity
@@ -32,7 +33,7 @@ class LocationPagingSource @Inject constructor(
                 return try {
                     when (val response = oneShotCalls {
                         api.getLocationsList(
-                            position * 2,
+                            position + 1,
                             name = name,
                             type = type,
                             dimension = dimension
@@ -46,7 +47,7 @@ class LocationPagingSource @Inject constructor(
                                         name = locationsApiModel.name,
                                         type = locationsApiModel.type,
                                         dimension = locationsApiModel.dimension,
-                                        residents = locationsApiModel.residents
+                                        residents = locationsApiModel.residents.map { it.extractLastPartToIntOrZero() }
                                     )
                                 }
                             withContext(Dispatchers.IO) {

@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.example.rickmorty.base.extractLastPartToIntOrZero
 import com.example.rickmorty.data.InternetManager
 import com.example.rickmorty.data.RickAndMortyApi
 import com.example.rickmorty.data.locations.local.LocationsDao
@@ -30,7 +31,7 @@ class LocationsRepository @Inject constructor(
         dimension: String?
     ): Flow<PagingData<LocationModel>> {
         if (internetManager.isInternetConnected()) {
-            return Pager(config = PagingConfig(pageSize = 2, enablePlaceholders = false),
+            return Pager(config = PagingConfig(pageSize = 20, enablePlaceholders = false),
                 pagingSourceFactory = {
                     locationPagingSource.getPagingLocations(
                         name = name,
@@ -74,7 +75,7 @@ class LocationsRepository @Inject constructor(
                     name = apiAboutLocation.name,
                     type = apiAboutLocation.type,
                     dimension = apiAboutLocation.dimension,
-                    residents = apiAboutLocation.residents
+                    residents = apiAboutLocation.residents.map { it.extractLastPartToIntOrZero() }
                 )
             )
         }

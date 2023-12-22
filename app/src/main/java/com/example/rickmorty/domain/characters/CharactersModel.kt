@@ -9,8 +9,8 @@ data class CharactersModel(
     val species: String,
     val type: String,
     val gender: String,
-    val origin: OriginModel,
-    val location: LocationModel,
+    val origin: OriginModel?,
+    val location: LocationModel?,
     val image: Bitmap,
     val episode: List<Int>,
 )

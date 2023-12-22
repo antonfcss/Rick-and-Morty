@@ -17,7 +17,7 @@ class BaseSourceImpl @Inject constructor() : BaseSource {
                 } else {
                     Results.Error(Exception("body is null"))
                 }
-            } else return Results.Error(Exception("response not success"))
+            } else return Results.Error(Exception(""))
         } catch (e: Exception) {
             return when (e) {
                 is SocketTimeoutException -> {

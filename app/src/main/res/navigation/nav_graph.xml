@@ -18,16 +18,41 @@
         android:id="@+id/locationsFragment"
         android:name="com.example.rickmorty.presentation.locations.LocationsFragment"
         android:label="LocationsFragment"
-        tools:layout="@layout/locations_fragment" />
+        tools:layout="@layout/locations_fragment">
+        <action
+            android:id="@+id/action_locationsFragment_to_aboutLocationFragment"
+            app:destination="@id/aboutLocationFragment" />
+    </fragment>
     <fragment
         android:id="@+id/episodesFragment"
         android:name="com.example.rickmorty.presentation.episodes.EpisodesFragment"
         android:label="EpisodesFragment"
-        tools:layout="@layout/episodes_fragment" />
+        tools:layout="@layout/episodes_fragment">
+        <action
+            android:id="@+id/action_episodesFragment_to_aboutEpisodeFragment"
+            app:destination="@id/aboutEpisodeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/aboutCharacterFragment"
         android:name="com.example.rickmorty.presentation.characters.aboutCharacter.AboutCharacterFragment"
         android:label="AboutCharacterFragment"
-        tools:layout="@layout/about_character_fragment" />
+        tools:layout="@layout/about_character_fragment">
+        <action
+            android:id="@+id/action_aboutCharacterFragment_to_aboutEpisodeFragment"
+            app:destination="@id/aboutEpisodeFragment" />
+        <action
+            android:id="@+id/action_aboutCharacterFragment_to_aboutLocationFragment"
+            app:destination="@id/aboutLocationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutEpisodeFragment"
+        android:name="com.example.rickmorty.presentation.episodes.aboutEpisode.AboutEpisodeFragment"
+        android:label="AboutEpisodeFragment"
+        tools:layout="@layout/about_episode_fragment" />
+    <fragment
+        android:id="@+id/aboutLocationFragment"
+        android:name="com.example.rickmorty.presentation.locations.aboutLocation.AboutLocationFragment"
+        android:label="AboutLocationFragment"
+        tools:layout="@layout/about_locatio_fragment" />
 
 </navigation>
