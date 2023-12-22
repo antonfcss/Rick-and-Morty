@@ -28,6 +28,7 @@ class AboutCharacterViewModel @Inject constructor(private val aboutCharacterInte
                         type = aboutCharacterModel.type,
                         gender = aboutCharacterModel.gender,
                         originName = aboutCharacterModel.originName,
+                        originId = aboutCharacterModel.originId,
                         locationId = aboutCharacterModel.locationId,
                         locationName = aboutCharacterModel.locationName,
                         image = aboutCharacterModel.image,

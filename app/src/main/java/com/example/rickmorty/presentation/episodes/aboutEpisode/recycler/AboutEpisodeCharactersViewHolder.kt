@@ -1,18 +1,23 @@
 package com.example.rickmorty.presentation.episodes.aboutEpisode.recycler
 
+import androidx.recyclerview.widget.RecyclerView
 import com.example.rickmorty.databinding.EpisodeCharacterItemBinding
-import com.example.rickmorty.presentation.episodes.aboutEpisode.recycler.model.AboutEpisodeCharactersModel
 
-class AboutEpisodeCharactersViewHolder(private val binding: EpisodeCharacterItemBinding) :
-    AboutEpisodeViewHolder(binding) {
+class AboutEpisodeCharactersViewHolder(
+    private val binding: EpisodeCharacterItemBinding,
+    private val onClick: (Int) -> Unit,
+) :
+    RecyclerView.ViewHolder(binding.root) {
 
     fun bind(aboutEpisodeCharactersModel: AboutEpisodeCharactersModel) {
         with(binding) {
+            root.setOnClickListener { onClick.invoke(aboutEpisodeCharactersModel.characterId) }
             avatarImageView.setImageBitmap(aboutEpisodeCharactersModel.image)
             nameTextView.text = aboutEpisodeCharactersModel.characterName
             speciesTextView.text = aboutEpisodeCharactersModel.characterSpecies
             statusTextView.text = aboutEpisodeCharactersModel.characterStatus
             genderTextView.text = aboutEpisodeCharactersModel.characterGender
+
         }
     }
 }

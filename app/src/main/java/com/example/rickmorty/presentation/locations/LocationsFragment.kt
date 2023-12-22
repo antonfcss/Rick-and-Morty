@@ -49,6 +49,9 @@ class LocationsFragment :
             include.filterButton.setOnClickListener {
                 viewModel.onFilterButtonClicked()
             }
+            swipeToRefresh.setOnRefreshListener {
+                viewModel.getLocationList()
+            }
             viewModel.getFilterLiveData().observe(viewLifecycleOwner) { filter ->
                 filter?.let { locationFilter ->
                     val dialogFragment = LocationsDialogFragment()
@@ -59,13 +62,13 @@ class LocationsFragment :
 
                 }
             }
-            viewModel.getLocationList()
-            setFragmentResultListener("filter_location") { key, bundle ->
-                if (key == "filter_location") {
-                    viewModel.setFilter(
-                        bundle.getSerializable("filter_location") as LocationFilters
-                    )
-                }
+        }
+        viewModel.getLocationList()
+        setFragmentResultListener("filter_location") { key, bundle ->
+            if (key == "filter_location") {
+                viewModel.setFilter(
+                    bundle.getSerializable("filter_location") as LocationFilters
+                )
             }
         }
     }
@@ -74,8 +77,9 @@ class LocationsFragment :
         lifecycleScope.launch {
             locationsAdapter.submitData(viewState.data.locationList)
         }
-        if (locationsAdapter.itemCount == 0) {
-            viewModel.onEmptyDataReceiver()
-        }
+        binding.swipeToRefresh.isRefreshing = false
+//        if (locationsAdapter.itemCount == 0) {
+//            viewModel.onEmptyDataReceiver()
+//        }
     }
 }

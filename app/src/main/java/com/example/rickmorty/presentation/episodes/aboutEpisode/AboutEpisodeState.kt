@@ -1,7 +1,10 @@
 package com.example.rickmorty.presentation.episodes.aboutEpisode
 
-import com.example.rickmorty.presentation.episodes.aboutEpisode.recycler.model.AboutEpisodeRecyclerModel
+import com.example.rickmorty.presentation.episodes.aboutEpisode.recycler.AboutEpisodeCharactersModel
 
 data class AboutEpisodeState(
-    val episodeModelList: List<AboutEpisodeRecyclerModel>
+    val nameEpisode: String,
+    val airDate: String,
+    val dateEpisode: String,
+    val episodeModelList: List<AboutEpisodeCharactersModel>
 )

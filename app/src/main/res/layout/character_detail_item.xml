@@ -22,7 +22,7 @@
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="16dp"
         android:adjustViewBounds="true"
-        android:src="@drawable/placeholder_image"
+        tools:src="@drawable/placeholder_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        android:text="Rick Sanchez"
+        tools:text="Rick Sanchez"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/avatarImageView" />
 
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"
         android:layout_marginTop="5dp"
-        android:text="Aliver"
+        tools:text="Aliver"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/detailsTextView" />
 
@@ -66,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"
-        android:text="Aliver"
+        tools:text="Aliver"
         app:layout_constraintStart_toEndOf="@id/statusTextView"
         app:layout_constraintTop_toTopOf="@id/statusTextView" />
 
@@ -76,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"
-        android:text="Aliver"
+        tools:text="Aliver"
         app:layout_constraintStart_toEndOf="@id/speciesTextView"
         app:layout_constraintTop_toTopOf="@id/speciesTextView" />
 
@@ -98,7 +98,6 @@
         android:layout_marginStart="25dp"
         android:layout_marginTop="20dp"
         android:text="@string/location"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/statusTextView" />
 
@@ -109,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"
         android:layout_marginTop="5dp"
-        android:text="Earth"
+        tools:text="Earth"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/locationsTitleTextView" />
 
@@ -131,7 +130,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"
         android:layout_marginTop="5dp"
-        android:text="Earth"
+        tools:text="Earth"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/originTitleTextView" />
 

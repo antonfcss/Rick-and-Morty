@@ -57,6 +57,9 @@ class EpisodesFragment : BaseFragment<EpisodesFragmentBinding, EpisodesViewModel
                     dialogFragment.show(parentFragmentManager, "tag_episode")
                 }
             }
+            swipeToRefresh.setOnRefreshListener {
+                viewModel.getEpisodesList()
+            }
         }
         viewModel.getEpisodesList()
         setFragmentResultListener("filter_episodes") { key, bundle ->
@@ -72,5 +75,6 @@ class EpisodesFragment : BaseFragment<EpisodesFragmentBinding, EpisodesViewModel
         lifecycleScope.launch {
             episodesAdapter.submitData(viewState.data.episodesList)
         }
+        binding.swipeToRefresh.isRefreshing = false
     }
 }

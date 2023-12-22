@@ -4,9 +4,7 @@ import android.util.Log
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.domain.locations.AboutLocationInteract
-import com.example.rickmorty.presentation.locations.aboutLocation.recycler.model.AboutLocationCharactersModel
-import com.example.rickmorty.presentation.locations.aboutLocation.recycler.model.AboutLocationDetailModel
-import com.example.rickmorty.presentation.locations.aboutLocation.recycler.model.AboutLocationRecyclerModel
+import com.example.rickmorty.presentation.locations.aboutLocation.recycler.AboutLocationCharactersModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
@@ -21,15 +19,9 @@ class AboutLocationViewModel @Inject constructor(
             aboutLocationInteract.getDetailAboutLocation(id)
                 .catch { Log.d("AboutLocationViewModel", it.message.toString()) }
                 .collect { aboutLocationModel ->
-                    val locationUiModelList = arrayListOf<AboutLocationRecyclerModel>()
-                    val locationModel = AboutLocationDetailModel(
-                        name = aboutLocationModel.name,
-                        type = aboutLocationModel.type,
-                        dimension = aboutLocationModel.dimension
-                    )
-                    locationUiModelList.add(locationModel)
                     val charactersList = aboutLocationModel.charactersList.map { characte ->
                         AboutLocationCharactersModel(
+                            characterId = characte.id,
                             characterName = characte.name,
                             characterSpecies = characte.species,
                             characterStatus = characte.status,
@@ -37,8 +29,16 @@ class AboutLocationViewModel @Inject constructor(
                             image = characte.image
                         )
                     }
-                    locationUiModelList.addAll(charactersList)
-                    updateState(ViewState.Success(AboutLocationState(locationUiModelList)))
+                    updateState(
+                        ViewState.Success(
+                            AboutLocationState(
+                                name = aboutLocationModel.name,
+                                type = aboutLocationModel.type,
+                                dimension = aboutLocationModel.dimension,
+                                charactersList
+                            )
+                        )
+                    )
                 }
         }
     }

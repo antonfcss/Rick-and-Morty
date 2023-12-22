@@ -1,10 +1,13 @@
 package com.example.rickmorty.presentation.locations.aboutLocation.recycler
 
+import androidx.recyclerview.widget.RecyclerView
 import com.example.rickmorty.databinding.LocationCharacterItemBinding
-import com.example.rickmorty.presentation.locations.aboutLocation.recycler.model.AboutLocationCharactersModel
 
-class AboutLocationCharactersViewHolder(private val binding: LocationCharacterItemBinding) :
-    AboutLocationViewHolder(binding) {
+class AboutLocationCharactersViewHolder(
+    private val binding: LocationCharacterItemBinding,
+    private val onClick: (Int) -> Unit,
+) :
+    RecyclerView.ViewHolder(binding.root) {
     fun bind(aboutLocationCharactersModel: AboutLocationCharactersModel) {
         with(binding) {
             avatarImageView.setImageBitmap(aboutLocationCharactersModel.image)
@@ -12,6 +15,9 @@ class AboutLocationCharactersViewHolder(private val binding: LocationCharacterIt
             speciesTextView.text = aboutLocationCharactersModel.characterSpecies
             statusTextView.text = aboutLocationCharactersModel.characterStatus
             genderTextView.text = aboutLocationCharactersModel.characterGender
+            root.setOnClickListener {
+                onClick.invoke(aboutLocationCharactersModel.characterId)
+            }
         }
     }
 }
