@@ -1,6 +1,8 @@
 package com.example.rickmorty.presentation.locations
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.map
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
@@ -16,8 +18,15 @@ import javax.inject.Inject
 class LocationsViewModel @Inject constructor(private val locationUseCase: LocationUseCase) :
     BaseViewModel<LocationsState>() {
     private var filterState = LocationFilters.NAME
-    fun getFilter(): LocationFilters {
-        return filterState
+    private val filterLiveData = MutableLiveData<LocationFilters?>()
+
+    fun getFilterLiveData(): LiveData<LocationFilters?> = filterLiveData
+    fun onFilterButtonClicked() {
+        filterLiveData.postValue(filterState)
+    }
+
+    fun postFilterClicked() {
+        filterLiveData.postValue(null)
     }
 
     fun setFilter(filter: LocationFilters) {
@@ -33,7 +42,6 @@ class LocationsViewModel @Inject constructor(private val locationUseCase: Locati
             name = searchText.takeIf { filterState == LocationFilters.NAME },
             type = searchText.takeIf { filterState == LocationFilters.TYPE },
             dimension = searchText.takeIf { filterState == LocationFilters.DIMENSION },
-
             )
     }
 
@@ -64,6 +72,10 @@ class LocationsViewModel @Inject constructor(private val locationUseCase: Locati
                     )
                 }
         }
+    }
+
+    fun onEmptyDataReceiver() {
+        showEmptyDataDialog("Received an empty list of locations")
     }
 
 }

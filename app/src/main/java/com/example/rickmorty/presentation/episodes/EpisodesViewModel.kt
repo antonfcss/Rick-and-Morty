@@ -1,6 +1,8 @@
 package com.example.rickmorty.presentation.episodes
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.map
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
@@ -16,8 +18,14 @@ import javax.inject.Inject
 class EpisodesViewModel @Inject constructor(private val episodesUseCase: EpisodesUseCase) :
     BaseViewModel<EpisodesState>() {
     private var filterState = EpisodeFilters.NAME
-    fun getFilter(): EpisodeFilters {
-        return filterState
+    private val filterLiveData = MutableLiveData<EpisodeFilters?>()
+    fun getFilterLiveData(): LiveData<EpisodeFilters?> = filterLiveData
+    fun onFilterButtonClicked() {
+        filterLiveData.postValue(filterState)
+    }
+
+    fun postFilterClicked() {
+        filterLiveData.postValue(null)
     }
 
     fun setFilter(filter: EpisodeFilters) {
@@ -45,7 +53,7 @@ class EpisodesViewModel @Inject constructor(private val episodesUseCase: Episode
                             id = episodesModel.id,
                             name = episodesModel.name,
                             airDate = episodesModel.airDate,
-                            episode = episodesModel.episode
+                            episode = episodesModel.dateEpisode
                         )
                     }
                 }

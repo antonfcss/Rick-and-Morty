@@ -11,8 +11,20 @@ abstract class BaseViewModel<State> : ViewModel() {
 
     private val state = MutableLiveData<ViewState<State>>()
 
+    private val emptyDataLiveData = MutableLiveData<String?>()
+
+    fun getEmptyDataLiveData(): LiveData<String?> = emptyDataLiveData
+
     val viewModelState: LiveData<ViewState<State>>
         get() = state
+
+    protected fun showEmptyDataDialog(emptyDataError: String) {
+        emptyDataLiveData.postValue(emptyDataError)
+    }
+
+    fun onPostEmptyDataDialogShown() {
+        emptyDataLiveData.postValue(null)
+    }
 
     protected fun setState(newState: ViewState<State>) {
         state.value = newState

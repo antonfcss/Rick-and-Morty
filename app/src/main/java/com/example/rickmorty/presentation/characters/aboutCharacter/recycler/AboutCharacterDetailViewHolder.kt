@@ -19,7 +19,13 @@ class AboutCharacterDetailViewHolder(
                 typeTextView.visibility = View.GONE
             }
             genderTextView.text = aboutCharacterUiModel.gender
-            originTextView.text = aboutCharacterUiModel.originName
+            if (aboutCharacterUiModel.originName.isNullOrEmpty().not()) {
+                originTextView.text = aboutCharacterUiModel.originName
+                originTextView.setOnClickListener { }
+            } else {
+                originTextView.visibility = View.GONE
+                originTitleTextView.visibility = View.GONE
+            }
             locationsTextView.text = aboutCharacterUiModel.locationName
             locationsTextView.setOnClickListener {
                 onLocationClicked.invoke(aboutCharacterUiModel.locationId)

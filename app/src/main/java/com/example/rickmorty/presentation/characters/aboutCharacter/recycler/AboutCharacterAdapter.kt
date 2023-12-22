@@ -2,7 +2,7 @@ package com.example.rickmorty.presentation.characters.aboutCharacter.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.rickmorty.databinding.CharacterDetailItemBinding
 import com.example.rickmorty.databinding.CharacterEpisodesItemBinding
 import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.model.AboutCharacterEpisodeModel
@@ -11,8 +11,18 @@ import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.mod
 
 class AboutCharacterAdapter(
     private val onLocationClicked: (Int) -> Unit,
+    private val onEpisodeClicked: (Int) -> Unit,
 ) :
-    ListAdapter<AboutCharacterRecyclerModel, AboutCharacterViewHolder>(AboutCharacterDiffUtil()) {
+    RecyclerView.Adapter<AboutCharacterViewHolder>() {
+
+    private val data = mutableListOf<AboutCharacterRecyclerModel>()
+
+    override fun getItemCount(): Int = data.size
+    fun setData(newData: List<AboutCharacterRecyclerModel>) {
+        data.clear()
+        data.addAll(newData)
+        notifyDataSetChanged()
+    }
 
     private companion object {
         const val ABOUT_CHARACTER_DETAIL = 0
@@ -27,6 +37,7 @@ class AboutCharacterAdapter(
         }
     }
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AboutCharacterViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {
@@ -36,11 +47,13 @@ class AboutCharacterAdapter(
                     parent,
                     false
                 ),
-                onLocationClicked
+                onLocationClicked,
             )
 
             ABOUT_CHARACTER_EPISODES -> AboutCharacterEpisodesViewHolder(
-                CharacterEpisodesItemBinding.inflate(layoutInflater, parent, false)
+                CharacterEpisodesItemBinding.inflate(layoutInflater, parent, false),
+                onEpisodeClicked
+
             )
 
             else -> throw IllegalArgumentException("Ошибка ViewType")
@@ -49,8 +62,8 @@ class AboutCharacterAdapter(
 
     override fun onBindViewHolder(holder: AboutCharacterViewHolder, position: Int) {
         when (holder) {
-            is AboutCharacterDetailViewHolder -> holder.bind(getItem(position) as AboutCharacterUiModel)
-            is AboutCharacterEpisodesViewHolder -> holder.bind(getItem(position) as AboutCharacterEpisodeModel)
+            is AboutCharacterDetailViewHolder -> holder.bind(data[position] as AboutCharacterUiModel)
+            is AboutCharacterEpisodesViewHolder -> holder.bind(data[position] as AboutCharacterEpisodeModel)
         }
     }
 }

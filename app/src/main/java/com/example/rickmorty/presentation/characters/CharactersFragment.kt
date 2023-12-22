@@ -52,14 +52,16 @@ class CharactersFragment :
                 viewModel.getCharactersListByQuery(included.searchView.query.toString())
             }
             included.filterButton.setOnClickListener {
-                val dialogFragment = CharactersDialogFragment()
-                val bundle = bundleOf("filter" to viewModel.getFilter())
-                dialogFragment.arguments = bundle
-                dialogFragment.show(parentFragmentManager, "tag")
-//                CharactersDialogFragment().show(
-//                    parentFragmentManager,
-//                    "teg"
-//                )
+                viewModel.onFilterButtonClicked()
+            }
+            viewModel.getFilterLiveData().observe(viewLifecycleOwner) { filter ->
+                filter?.let { characterFilter ->
+                    val dialogFragment = CharactersDialogFragment()
+                    val bundle = bundleOf("filter" to characterFilter)
+                    dialogFragment.arguments = bundle
+                    viewModel.postFilterClicked()
+                    dialogFragment.show(parentFragmentManager, "tag")
+                }
             }
         }
         viewModel.getCharactersList()

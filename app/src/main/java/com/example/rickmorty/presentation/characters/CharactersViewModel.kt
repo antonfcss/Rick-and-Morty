@@ -1,6 +1,8 @@
 package com.example.rickmorty.presentation.characters
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.map
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
@@ -17,15 +19,21 @@ class CharactersViewModel @Inject constructor(private val charactersUseCase: Cha
     BaseViewModel<CharactersState>() {
 
     private var filterState = CharacterFilters.NAME
+    private val filterLiveData = MutableLiveData<CharacterFilters?>()
 
-    fun getFilter(): CharacterFilters {
-        return filterState
+    fun getFilterLiveData(): LiveData<CharacterFilters?> = filterLiveData
+
+    fun setFilter(characterFilter: CharacterFilters) {
+        filterState = characterFilter
     }
 
-    fun setFilter(filter: CharacterFilters) {
-        filterState = filter
+    fun onFilterButtonClicked() {
+        filterLiveData.postValue(filterState)
     }
 
+    fun postFilterClicked() {
+        filterLiveData.postValue(null)
+    }
 
     fun getCharactersList() {
         loadCharactersList(

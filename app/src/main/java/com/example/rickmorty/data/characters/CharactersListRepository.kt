@@ -8,6 +8,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.rickmorty.R
+import com.example.rickmorty.base.extractLastPartToIntOrZero
 import com.example.rickmorty.data.InternetManager
 import com.example.rickmorty.data.RickAndMortyApi
 import com.example.rickmorty.data.characters.local.CharactersDao
@@ -41,7 +42,7 @@ class CharactersListRepository @Inject constructor(
         species: String?,
     ): Flow<PagingData<CharactersModel>> {
         if (internetManager.isInternetConnected()) {
-            return Pager(config = PagingConfig(pageSize = 2, enablePlaceholders = false),
+            return Pager(config = PagingConfig(pageSize = 20, enablePlaceholders = false),
                 pagingSourceFactory = {
                     charactersPagingSource.getPagingCharacters(
                         name = name,
@@ -72,12 +73,12 @@ class CharactersListRepository @Inject constructor(
                                 type = characterEntity.type,
                                 gender = characterEntity.gender,
                                 origin = OriginModel(
-                                    name = characterEntity.origin.name,
-                                    id = characterEntity.origin.id,
+                                    name = characterEntity.origin?.name ?: "",
+                                    id = characterEntity.origin?.id ?: 0,
                                 ),
                                 location = LocationModel(
-                                    name = characterEntity.location.name,
-                                    id = characterEntity.location.id
+                                    name = characterEntity.location?.name ?: "",
+                                    id = characterEntity.location?.id ?: 0
                                 ),
                                 image = loadImageFromStorage(characterEntity.id),
                                 episode = characterEntity.episode.episodesList
@@ -101,16 +102,20 @@ class CharactersListRepository @Inject constructor(
                     species = apiAboutCharacter.species,
                     type = apiAboutCharacter.type,
                     gender = apiAboutCharacter.gender,
-                    origin = OriginModel(
-                        name = apiAboutCharacter.originApi.originName,
-                        id = apiAboutCharacter.locationApi.url.substringAfterLast('/').toInt()
-                    ),
-                    location = LocationModel(
-                        name = apiAboutCharacter.locationApi.locationName,
-                        id = apiAboutCharacter.locationApi.url.substringAfterLast('/').toInt()
-                    ),
+                    origin = if (apiAboutCharacter.originApi.url.isNotEmpty()) {
+                        OriginModel(
+                            name = apiAboutCharacter.originApi.originName,
+                            id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
+                        )
+                    } else null,
+                    location = if (apiAboutCharacter.locationApi.url.isNotEmpty()) {
+                        LocationModel(
+                            name = apiAboutCharacter.locationApi.locationName,
+                            id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
+                        )
+                    } else null,
                     image = loadImageFromStorage(id),
-                    episode = apiAboutCharacter.episode.map { it.substringAfterLast('/').toInt() }
+                    episode = apiAboutCharacter.episode.map { it.extractLastPartToIntOrZero() }
                 )
             )
         }

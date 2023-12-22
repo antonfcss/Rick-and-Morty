@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.rickmorty.base.BaseSource
 import com.example.rickmorty.base.Results
+import com.example.rickmorty.base.extractLastPartToIntOrZero
 import com.example.rickmorty.data.RickAndMortyApi
 import com.example.rickmorty.data.episodes.local.EpisodesDao
 import com.example.rickmorty.data.episodes.local.entities.EpisodesCharacterEntity
@@ -28,7 +29,7 @@ class EpisodesPagingSource @Inject constructor(
                 return try {
                     when (val response = oneShotCalls {
                         api.getEpisodesList(
-                            position * 2,
+                            position + 1,
                             name = name,
                             episode = episode
                         )
@@ -40,8 +41,8 @@ class EpisodesPagingSource @Inject constructor(
                                         id = episodesApiModel.id,
                                         name = episodesApiModel.name,
                                         airDate = episodesApiModel.airDate,
-                                        episode = episodesApiModel.episode,
-                                        charactersList = episodesApiModel.characters
+                                        dateEpisode = episodesApiModel.episode,
+                                        charactersList = episodesApiModel.characters.map { it.extractLastPartToIntOrZero() }
                                     )
                                 }
                             withContext(Dispatchers.IO) {
@@ -50,7 +51,7 @@ class EpisodesPagingSource @Inject constructor(
                                         id = episodesModel.id,
                                         name = episodesModel.name,
                                         airDate = episodesModel.airDate,
-                                        episode = episodesModel.episode,
+                                        episode = episodesModel.dateEpisode,
                                         characters = EpisodesCharacterEntity(episodesModel.charactersList)
                                     )
                                 })

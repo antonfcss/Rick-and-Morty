@@ -6,7 +6,9 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import com.example.rickmorty.R
 import com.example.rickmorty.base.BaseFragment
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.databinding.EpisodesFragmentBinding
@@ -19,7 +21,15 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class EpisodesFragment : BaseFragment<EpisodesFragmentBinding, EpisodesViewModel, EpisodesState>() {
-    private val episodesAdapter: EpisodesAdapter by lazy { EpisodesAdapter() }
+    private val episodesAdapter: EpisodesAdapter by lazy {
+        EpisodesAdapter {
+            findNavController().navigate(
+                R.id.action_episodesFragment_to_aboutEpisodeFragment,
+                bundleOf("id_episode" to it)
+            )
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
@@ -36,19 +46,24 @@ class EpisodesFragment : BaseFragment<EpisodesFragmentBinding, EpisodesViewModel
                 viewModel.getEpisodesListByQuery(include.searchView.query.toString())
             }
             include.filterButton.setOnClickListener {
-                val dialogFragment = EpisodesDialogFragment()
-                val bundle = bundleOf("filter_episodes" to viewModel.getFilter())
-                dialogFragment.arguments = bundle
-                dialogFragment.show(parentFragmentManager, "tag_episode")
+                viewModel.onFilterButtonClicked()
             }
-            viewModel.getEpisodesList()
-            setFragmentResultListener("filter_episodes") { key, bundle ->
-                if (key == "filter_episodes") {
-                    viewModel.setFilter(
-                        bundle.getSerializable("filter_episodes") as EpisodeFilters
-                    )
+            viewModel.getFilterLiveData().observe(viewLifecycleOwner) { filter ->
+                filter?.let { episodeFilter ->
+                    val dialogFragment = EpisodesDialogFragment()
+                    val bundle = bundleOf("filter_episodes" to episodeFilter)
+                    dialogFragment.arguments = bundle
+                    viewModel.postFilterClicked()
+                    dialogFragment.show(parentFragmentManager, "tag_episode")
                 }
-
+            }
+        }
+        viewModel.getEpisodesList()
+        setFragmentResultListener("filter_episodes") { key, bundle ->
+            if (key == "filter_episodes") {
+                viewModel.setFilter(
+                    bundle.getSerializable("filter_episodes") as EpisodeFilters
+                )
             }
         }
     }

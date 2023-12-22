@@ -3,7 +3,7 @@ package com.example.rickmorty.presentation.characters.aboutCharacter
 import android.util.Log
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
-import com.example.rickmorty.domain.characters.AboutCharacterInteractor
+import com.example.rickmorty.domain.characters.AboutCharacterInteract
 import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.model.AboutCharacterEpisodeModel
 import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.model.AboutCharacterRecyclerModel
 import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.model.AboutCharacterUiModel
@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
 
 @HiltViewModel
-class AboutCharacterViewModel @Inject constructor(private val aboutCharacterInteractor: AboutCharacterInteractor) :
+class AboutCharacterViewModel @Inject constructor(private val aboutCharacterInteract: AboutCharacterInteract) :
     BaseViewModel<AboutCharacterState>() {
 
     fun getAboutCharacterDetail(id: Int) {
         launchIO {
-            aboutCharacterInteractor.getDetailAboutCharacter(id)
+            aboutCharacterInteract.getDetailAboutCharacter(id)
                 .catch { Log.d("AboutCharacterViewModel", it.message.toString()) }
                 .collect { aboutCharacterModel ->
                     val characterUiModelList = arrayListOf<AboutCharacterRecyclerModel>()
@@ -35,8 +35,9 @@ class AboutCharacterViewModel @Inject constructor(private val aboutCharacterInte
                     characterUiModelList.add(characterModel)
                     val episodesList = aboutCharacterModel.episodeList.map { episode ->
                         AboutCharacterEpisodeModel(
+                            episodeId = episode.id,
                             nameEpisode = episode.name,
-                            numberEpisode = episode.episode,
+                            numberEpisode = episode.dateEpisode,
                             airDataEpisode = episode.airDate,
                         )
                     }

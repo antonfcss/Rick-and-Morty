@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.rickmorty.R
 import com.example.rickmorty.base.BaseSource
 import com.example.rickmorty.base.Results
+import com.example.rickmorty.base.extractLastPartToInt
 import com.example.rickmorty.data.RickAndMortyApi
 import com.example.rickmorty.data.characters.local.CharactersDao
 import com.example.rickmorty.data.characters.local.entities.CharacterEntity
@@ -52,7 +53,7 @@ class CharactersPagingSource @Inject constructor(
                 return try {
                     when (val response = oneShotCalls {
                         api.getCharacterList(
-                            page = position * 2,
+                            page = position + 1,
                             name = name,
                             status = status,
                             species = species,
@@ -69,25 +70,23 @@ class CharactersPagingSource @Inject constructor(
                                         species = charactersApiModel.species,
                                         type = charactersApiModel.type,
                                         gender = charactersApiModel.gender,
-                                        origin = OriginModel(
-                                            name = charactersApiModel.originApi.originName,
-                                            id = charactersApiModel.originApi.url.substringAfterLast(
-                                                '/'
-                                            ).toIntOrNull() ?: 0,
-                                        ),
-                                        location = LocationModel(
-                                            name = charactersApiModel.locationApi.locationName,
-                                            id = charactersApiModel.locationApi.url.substringAfterLast(
-                                                '/'
-                                            ).toIntOrNull() ?: 0
-                                        ),
+                                        origin = if (charactersApiModel.originApi.url.isNotEmpty()) {
+                                            OriginModel(
+                                                name = charactersApiModel.originApi.originName,
+                                                id = charactersApiModel.originApi.url.extractLastPartToInt(),
+                                            )
+                                        } else null,
+                                        location = if (charactersApiModel.locationApi.url.isNotEmpty()) {
+                                            LocationModel(
+                                                name = charactersApiModel.locationApi.locationName,
+                                                id = charactersApiModel.locationApi.url.extractLastPartToInt()
+                                            )
+                                        } else null,
                                         image = getImageFromRemote(
                                             context, charactersApiModel.image
                                         ),
                                         episode = charactersApiModel.episode.map {
-                                            it.substringAfterLast(
-                                                '/'
-                                            ).toIntOrNull() ?: 0
+                                            it.extractLastPartToInt()
                                         }
                                     )
                                 }
@@ -104,12 +103,12 @@ class CharactersPagingSource @Inject constructor(
                                         type = characterModel.type,
                                         gender = characterModel.gender,
                                         origin = OriginEntity(
-                                            name = characterModel.origin.name,
-                                            id = characterModel.origin.id
+                                            name = characterModel.origin?.name ?: "",
+                                            id = characterModel.origin?.id ?: 0
                                         ),
                                         location = CharacterLocationEntity(
-                                            name = characterModel.location.name,
-                                            id = characterModel.location.id
+                                            name = characterModel.location?.name ?: "",
+                                            id = characterModel.location?.id ?: 0
                                         ),
                                         image = path,
                                         episode = CharacterEpisodesEntity(characterModel.episode),

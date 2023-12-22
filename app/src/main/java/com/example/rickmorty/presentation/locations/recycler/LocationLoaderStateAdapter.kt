@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.rickmorty.databinding.ItemErrorBinding
 import com.example.rickmorty.databinding.ItemProgressBinding
 
-class LocationLoaderStateAdapter : LoadStateAdapter<LocationLoaderStateAdapter.ItemViewHolder>() {
+class LocationLoaderStateAdapter(
+) : LoadStateAdapter<LocationLoaderStateAdapter.ItemViewHolder>() {
 
     override fun getStateViewType(loadState: LoadState) = when (loadState) {
         is LoadState.NotLoading -> ERROR

@@ -5,9 +5,12 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import com.example.rickmorty.databinding.RecyclerEpisodeItemBinding
 
-class EpisodesAdapter : PagingDataAdapter<EpisodesUiModel, EpisodesViewHolder>(EpisodesDiffUtil()) {
+class EpisodesAdapter(
+    private val onClick: (Int) -> Unit
+
+) : PagingDataAdapter<EpisodesUiModel, EpisodesViewHolder>(EpisodesDiffUtil()) {
     override fun onBindViewHolder(holder: EpisodesViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+        getItem(position)?.let { holder.bind(it, onClick) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpisodesViewHolder {
