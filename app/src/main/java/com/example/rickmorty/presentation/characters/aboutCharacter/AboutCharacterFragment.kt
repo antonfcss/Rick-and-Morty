@@ -23,13 +23,19 @@ class AboutCharacterFragment :
                 bundleOf("id_episode" to it)
             )
         },
-
             onLocationClicked = {
                 findNavController().navigate(
                     R.id.action_aboutCharacterFragment_to_aboutLocationFragment,
                     bundleOf("id_location" to it)
                 )
-            })
+            },
+            onOriginClicked = {
+                findNavController().navigate(
+                    R.id.action_aboutCharacterFragment_to_aboutLocationFragment,
+                    bundleOf("id_location" to it)
+                )
+            }
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

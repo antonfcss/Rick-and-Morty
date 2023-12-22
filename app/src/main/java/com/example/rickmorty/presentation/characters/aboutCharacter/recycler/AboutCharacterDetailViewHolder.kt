@@ -7,6 +7,7 @@ import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.mod
 class AboutCharacterDetailViewHolder(
     private val binding: CharacterDetailItemBinding,
     private val onLocationClicked: (Int) -> Unit,
+    private val onOriginClicked: (Int) -> Unit,
 ) : AboutCharacterViewHolder(binding) {
     fun bind(aboutCharacterUiModel: AboutCharacterUiModel) {
         with(binding) {
@@ -21,7 +22,9 @@ class AboutCharacterDetailViewHolder(
             genderTextView.text = aboutCharacterUiModel.gender
             if (aboutCharacterUiModel.originName.isNullOrEmpty().not()) {
                 originTextView.text = aboutCharacterUiModel.originName
-                originTextView.setOnClickListener { }
+                originTextView.setOnClickListener {
+                    aboutCharacterUiModel.originId?.let { it1 -> onOriginClicked.invoke(it1) }
+                }
             } else {
                 originTextView.visibility = View.GONE
                 originTitleTextView.visibility = View.GONE

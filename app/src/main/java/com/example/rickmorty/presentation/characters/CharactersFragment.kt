@@ -54,6 +54,9 @@ class CharactersFragment :
             included.filterButton.setOnClickListener {
                 viewModel.onFilterButtonClicked()
             }
+            swipeToRefresh.setOnRefreshListener {
+                viewModel.getCharactersList()
+            }
             viewModel.getFilterLiveData().observe(viewLifecycleOwner) { filter ->
                 filter?.let { characterFilter ->
                     val dialogFragment = CharactersDialogFragment()
@@ -79,6 +82,8 @@ class CharactersFragment :
         lifecycleScope.launch {
             charactersAdapter.submitData(viewState.data.charactersList)
         }
+        binding.swipeToRefresh.isRefreshing = false
+
     }
 
 }

@@ -12,6 +12,7 @@ import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.mod
 class AboutCharacterAdapter(
     private val onLocationClicked: (Int) -> Unit,
     private val onEpisodeClicked: (Int) -> Unit,
+    private val onOriginClicked: (Int) -> Unit,
 ) :
     RecyclerView.Adapter<AboutCharacterViewHolder>() {
 
@@ -48,6 +49,7 @@ class AboutCharacterAdapter(
                     false
                 ),
                 onLocationClicked,
+                onOriginClicked
             )
 
             ABOUT_CHARACTER_EPISODES -> AboutCharacterEpisodesViewHolder(

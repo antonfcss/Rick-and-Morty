@@ -9,6 +9,7 @@ data class AboutCharacterUiModel(
     val type: String,
     val gender: String,
     val originName: String?,
+    val originId: Int?,
     val locationId: Int,
     val locationName: String,
     val image: Bitmap,

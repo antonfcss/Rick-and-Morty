@@ -1,3 +1,0 @@
-package com.example.rickmorty.presentation.locations.aboutLocation.recycler.model
-
-sealed class AboutLocationRecyclerModel

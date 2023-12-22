@@ -48,11 +48,19 @@
         android:id="@+id/aboutEpisodeFragment"
         android:name="com.example.rickmorty.presentation.episodes.aboutEpisode.AboutEpisodeFragment"
         android:label="AboutEpisodeFragment"
-        tools:layout="@layout/about_episode_fragment" />
+        tools:layout="@layout/about_episode_fragment">
+        <action
+            android:id="@+id/action_aboutEpisodeFragment_to_aboutCharacterFragment"
+            app:destination="@id/aboutCharacterFragment" />
+    </fragment>
     <fragment
         android:id="@+id/aboutLocationFragment"
         android:name="com.example.rickmorty.presentation.locations.aboutLocation.AboutLocationFragment"
         android:label="AboutLocationFragment"
-        tools:layout="@layout/about_locatio_fragment" />
+        tools:layout="@layout/about_locatio_fragment">
+        <action
+            android:id="@+id/action_aboutLocationFragment_to_aboutCharacterFragment"
+            app:destination="@id/aboutCharacterFragment" />
+    </fragment>
 
 </navigation>

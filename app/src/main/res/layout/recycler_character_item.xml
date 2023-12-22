@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="center"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
@@ -23,7 +24,7 @@
             android:layout_marginTop="10dp"
             android:adjustViewBounds="true"
             android:background="@drawable/rectangle_avatar"
-            android:src="@drawable/placeholder_image"
+            tools:src="@drawable/placeholder_image"
             app:layout_constraintEnd_toEndOf="@+id/constraint"
             app:layout_constraintStart_toStartOf="@+id/constraint"
             app:layout_constraintTop_toTopOf="@+id/constraint" />
@@ -36,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:text="Rick Sanchez"
+            tools:text="Rick Sanchez"
             app:layout_constraintStart_toStartOf="@id/constraint"
             app:layout_constraintTop_toBottomOf="@id/avatarImageView" />
 
@@ -47,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="10dp"
-            android:text="Human"
+            tools:text="Human"
             app:layout_constraintStart_toStartOf="@+id/constraint"
             app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
 
@@ -57,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="22dp"
-            android:text="Live"
+            tools:text="Live"
             app:layout_constraintStart_toEndOf="@+id/speciesTextView"
             app:layout_constraintTop_toTopOf="@+id/speciesTextView" />
 
@@ -69,7 +70,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:text="Male"
+            tools:text="Male"
             app:layout_constraintBottom_toBottomOf="@+id/constraint"
             app:layout_constraintStart_toStartOf="@+id/constraint"
             app:layout_constraintTop_toBottomOf="@+id/speciesTextView" />
