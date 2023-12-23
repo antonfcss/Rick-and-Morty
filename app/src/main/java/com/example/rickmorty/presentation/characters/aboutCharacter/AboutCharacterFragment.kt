@@ -10,6 +10,7 @@ import com.example.rickmorty.base.BaseFragment
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.databinding.AboutCharacterFragmentBinding
 import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.AboutCharacterAdapter
+import com.example.rickmorty.presentation.characters.aboutCharacter.recycler.AboutCharacterItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,6 +35,9 @@ class AboutCharacterFragment :
                     R.id.action_aboutCharacterFragment_to_aboutLocationFragment,
                     bundleOf("id_location" to it)
                 )
+            },
+            onBackClicked = {
+                findNavController().popBackStack()
             }
         )
     }
@@ -41,11 +45,28 @@ class AboutCharacterFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.aboutCharactersRecyclerView.adapter = aboutCharacterAdapter
+        binding.aboutCharactersRecyclerView.addItemDecoration(
+            AboutCharacterItemDecoration(
+                50
+            )
+        )
         arguments?.getInt("id")?.let { viewModel.getAboutCharacterDetail(it) }
     }
 
     override fun renderSuccessState(viewState: ViewState.Success<AboutCharacterState>) {
         aboutCharacterAdapter.setData(viewState.data.characterModelsList)
         binding.progress.isVisible = false
+    }
+
+    override fun renderErrorState(viewState: ViewState.Error) {
+        with(binding) {
+            errorLayout.root.isVisible = true
+            errorLayout.retry.setOnClickListener {
+                arguments?.getInt("id")?.let { viewModel.getAboutCharacterDetail(it) }
+            }
+            errorLayout.textError.text = viewState.message
+            progress.isVisible = false
+            aboutCharactersRecyclerView.isVisible = false
+        }
     }
 }

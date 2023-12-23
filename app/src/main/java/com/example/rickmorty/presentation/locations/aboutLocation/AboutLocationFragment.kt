@@ -10,6 +10,7 @@ import com.example.rickmorty.base.BaseFragment
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.databinding.AboutLocatioFragmentBinding
 import com.example.rickmorty.presentation.locations.aboutLocation.recycler.AboutLocationAdapter
+import com.example.rickmorty.presentation.locations.aboutLocation.recycler.AboutLocationItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -29,16 +30,38 @@ class AboutLocationFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.aboutLocationRecyclerView.adapter = aboutLocationAdapter
+        binding.aboutLocationRecyclerView.addItemDecoration(AboutLocationItemDecoration(40, 20))
         arguments?.getInt("id_location")?.let { viewModel.getDetailAboutLocation(it) }
-
+        binding.backImageView.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     override fun renderSuccessState(viewState: ViewState.Success<AboutLocationState>) {
-        binding.progress.isVisible = false
         aboutLocationAdapter.setData(viewState.data.locationModelList)
-        binding.nameLocationTextView.text = viewState.data.name
-        binding.locationTypeTextView.text = viewState.data.type
-        binding.locationDimensionTextView.text = viewState.data.dimension
+        with(binding) {
+            progress.isVisible = false
+            charactersTitleTextView.visibility = View.VISIBLE
+            detailsTextView.visibility = View.VISIBLE
+            backImageView.visibility = View.VISIBLE
+            nameLocationTextView.text = viewState.data.name
+            locationTypeTextView.text = viewState.data.type
+            locationDimensionTextView.text = viewState.data.dimension
+        }
+    }
 
+    override fun renderErrorState(viewState: ViewState.Error) {
+        with(binding) {
+            errorLayout.root.isVisible = true
+            errorLayout.retry.setOnClickListener {
+                arguments?.getInt("id_location")?.let { viewModel.getDetailAboutLocation(it) }
+            }
+            errorLayout.textError.text = viewState.message
+            progress.isVisible = false
+            nameLocationTextView.isVisible = false
+            locationTypeTextView.isVisible = false
+            locationDimensionTextView.isVisible = false
+            aboutLocationRecyclerView.isVisible = false
+        }
     }
 }

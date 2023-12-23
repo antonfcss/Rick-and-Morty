@@ -89,6 +89,7 @@ class LocationPagingSource @Inject constructor(
                         ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
                 }
             }
+
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.rickmorty.presentation.episodes.aboutEpisode
 
-import android.util.Log
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.domain.episodes.AboutEpisodeInteract
@@ -16,7 +15,7 @@ class AboutEpisodeViewModel @Inject constructor(private val aboutEpisodeInteract
     fun getAboutEpisodeDetail(id: Int) {
         launchIO {
             aboutEpisodeInteract.getDetailAboutEpisode(id)
-                .catch { Log.d("AboutEpisodeViewModel", it.message.toString()) }
+                .catch { updateState(ViewState.Error(it.message.toString())) }
                 .collect { aboutEpisodeModel ->
                     val charactersList = aboutEpisodeModel.charactersList.map { character ->
                         AboutEpisodeCharactersModel(

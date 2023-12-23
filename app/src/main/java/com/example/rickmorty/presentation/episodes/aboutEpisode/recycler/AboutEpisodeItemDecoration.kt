@@ -1,11 +1,11 @@
-package com.example.rickmorty.presentation.characters.recycler
+package com.example.rickmorty.presentation.episodes.aboutEpisode.recycler
 
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class CharactersItemDecoration(
+class AboutEpisodeItemDecoration(
     private val spacing: Int,
     private val topSpacing: Int
 ) : RecyclerView.ItemDecoration() {

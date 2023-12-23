@@ -8,9 +8,13 @@ class AboutCharacterDetailViewHolder(
     private val binding: CharacterDetailItemBinding,
     private val onLocationClicked: (Int) -> Unit,
     private val onOriginClicked: (Int) -> Unit,
+    private val onBackClicked: () -> Unit
 ) : AboutCharacterViewHolder(binding) {
     fun bind(aboutCharacterUiModel: AboutCharacterUiModel) {
         with(binding) {
+            backImageView.setOnClickListener {
+                onBackClicked.invoke()
+            }
             nameCharactersTextView.text = aboutCharacterUiModel.characterName
             statusTextView.text = aboutCharacterUiModel.status
             speciesTextView.text = aboutCharacterUiModel.species

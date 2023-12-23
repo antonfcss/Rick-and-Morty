@@ -80,4 +80,8 @@ class CharactersViewModel @Inject constructor(private val charactersUseCase: Cha
                 }
         }
     }
+
+    fun onEmptyDataReceiver() {
+        showEmptyDataDialog("Received an empty list of locations")
+    }
 }
