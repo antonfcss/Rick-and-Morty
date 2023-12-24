@@ -42,11 +42,14 @@ class CharactersFragment :
             charactersRecyclerView.adapter = charactersAdapter.withLoadStateFooter(
                 CharactersLoaderStateAdapter()
             )
-            charactersRecyclerView.addItemDecoration(CharactersItemDecoration(2, 2, true, 2))
-            charactersAdapter.addLoadStateListener { state ->
-                val refreshState = state.refresh
-                charactersRecyclerView.isVisible = refreshState != LoadState.Loading
-                progress.isVisible = refreshState == LoadState.Loading
+            charactersRecyclerView.addItemDecoration(CharactersItemDecoration(40, 20))
+            charactersAdapter.addLoadStateListener { loadState ->
+                val refreshState = loadState.refresh
+                binding.charactersRecyclerView.isVisible = refreshState != LoadState.Loading
+                binding.progress.isVisible = refreshState == LoadState.Loading
+                if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
+                    if (charactersAdapter.itemCount < 1) viewModel.onEmptyDataReceiver()
+                }
             }
             included.searchButton.setOnClickListener {
                 viewModel.getCharactersListByQuery(included.searchView.query.toString())

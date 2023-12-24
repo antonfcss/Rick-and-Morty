@@ -34,4 +34,6 @@ class AboutEpisodeAdapter(
     override fun onBindViewHolder(holder: AboutEpisodeCharactersViewHolder, position: Int) {
         holder.bind(data[position])
     }
+
+
 }

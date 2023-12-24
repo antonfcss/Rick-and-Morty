@@ -23,4 +23,7 @@ interface CharactersDao {
     @Query("SELECT * FROM character WHERE species LIKE :species ORDER BY id ASC")
     fun searchBySpecies(species: String): List<CharacterEntity>
 
+    @Query("SELECT * FROM character WHERE id = :characterId")
+    fun searchById(characterId: Int): CharacterEntity?
+
 }

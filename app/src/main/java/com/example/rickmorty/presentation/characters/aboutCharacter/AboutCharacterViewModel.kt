@@ -1,6 +1,5 @@
 package com.example.rickmorty.presentation.characters.aboutCharacter
 
-import android.util.Log
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.domain.characters.AboutCharacterInteract
@@ -18,7 +17,7 @@ class AboutCharacterViewModel @Inject constructor(private val aboutCharacterInte
     fun getAboutCharacterDetail(id: Int) {
         launchIO {
             aboutCharacterInteract.getDetailAboutCharacter(id)
-                .catch { Log.d("AboutCharacterViewModel", it.message.toString()) }
+                .catch { updateState(ViewState.Error(it.message.toString())) }
                 .collect { aboutCharacterModel ->
                     val characterUiModelList = arrayListOf<AboutCharacterRecyclerModel>()
                     val characterModel = AboutCharacterUiModel(

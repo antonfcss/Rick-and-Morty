@@ -1,6 +1,5 @@
 package com.example.rickmorty.presentation.locations.aboutLocation
 
-import android.util.Log
 import com.example.rickmorty.base.BaseViewModel
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.domain.locations.AboutLocationInteract
@@ -17,7 +16,7 @@ class AboutLocationViewModel @Inject constructor(
     fun getDetailAboutLocation(id: Int) {
         launchIO {
             aboutLocationInteract.getDetailAboutLocation(id)
-                .catch { Log.d("AboutLocationViewModel", it.message.toString()) }
+                .catch { updateState(ViewState.Error(it.message.toString())) }
                 .collect { aboutLocationModel ->
                     val charactersList = aboutLocationModel.charactersList.map { characte ->
                         AboutLocationCharactersModel(

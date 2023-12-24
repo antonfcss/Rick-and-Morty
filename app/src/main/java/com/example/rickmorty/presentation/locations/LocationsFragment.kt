@@ -14,6 +14,7 @@ import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.databinding.LocationsFragmentBinding
 import com.example.rickmorty.presentation.locations.diaolog.LocationFilters
 import com.example.rickmorty.presentation.locations.diaolog.LocationsDialogFragment
+import com.example.rickmorty.presentation.locations.recycler.LocationItemDecoration
 import com.example.rickmorty.presentation.locations.recycler.LocationLoaderStateAdapter
 import com.example.rickmorty.presentation.locations.recycler.LocationsAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,10 +39,14 @@ class LocationsFragment :
             locationsRecyclerView.adapter = locationsAdapter.withLoadStateFooter(
                 LocationLoaderStateAdapter()
             )
-            locationsAdapter.addLoadStateListener { state ->
-                val refreshState = state.refresh
-                locationsRecyclerView.isVisible = refreshState != LoadState.Loading
-                progress.isVisible = refreshState == LoadState.Loading
+            locationsRecyclerView.addItemDecoration(LocationItemDecoration(40, 20))
+            locationsAdapter.addLoadStateListener { loadState ->
+                val refreshState = loadState.refresh
+                binding.locationsRecyclerView.isVisible = refreshState != LoadState.Loading
+                binding.progress.isVisible = refreshState == LoadState.Loading
+                if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
+                    if (locationsAdapter.itemCount < 1) viewModel.onEmptyDataReceiver()
+                }
             }
             include.searchButton.setOnClickListener {
                 viewModel.getLocationsListByQuery(include.searchView.query.toString())
@@ -78,8 +83,5 @@ class LocationsFragment :
             locationsAdapter.submitData(viewState.data.locationList)
         }
         binding.swipeToRefresh.isRefreshing = false
-//        if (locationsAdapter.itemCount == 0) {
-//            viewModel.onEmptyDataReceiver()
-//        }
     }
 }

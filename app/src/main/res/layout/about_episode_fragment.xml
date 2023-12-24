@@ -9,6 +9,8 @@
     <ImageView
         android:id="@+id/backImageView"
         android:layout_width="wrap_content"
+        android:padding="5dp"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
@@ -18,10 +20,14 @@
 
     <TextView
         android:id="@+id/nameEpisodeTextView"
+        android:layout_marginStart="40dp"
+        android:shadowColor="@color/yellow_text"
+        android:shadowDx="3"
+        android:shadowDy="3"
         style="@style/MyTextStyle.blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:shadowRadius="7"
         android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,6 +36,7 @@
     <TextView
         android:id="@+id/detailsTextView"
         style="@style/MyTextStyle.white"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
@@ -63,6 +70,7 @@
     <TextView
         android:id="@+id/charactersTitleTextView"
         style="@style/MyTextStyle.white"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -75,6 +83,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/aboutEpisodeRecyclerView"
+        android:layout_marginTop="10dp"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
@@ -91,6 +100,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminateDrawable="@drawable/loader_progress"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/errorLayout"
+        layout="@layout/data_error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

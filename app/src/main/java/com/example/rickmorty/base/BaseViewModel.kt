@@ -26,9 +26,6 @@ abstract class BaseViewModel<State> : ViewModel() {
         emptyDataLiveData.postValue(null)
     }
 
-    protected fun setState(newState: ViewState<State>) {
-        state.value = newState
-    }
 
     protected fun updateState(newState: ViewState<State>) {
         state.postValue(newState)

@@ -3,17 +3,19 @@ package com.example.rickmorty.data.locations
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import com.example.rickmorty.base.extractLastPartToIntOrZero
 import com.example.rickmorty.data.InternetManager
 import com.example.rickmorty.data.RickAndMortyApi
 import com.example.rickmorty.data.locations.local.LocationsDao
+import com.example.rickmorty.data.locations.local.entities.LocationEntity
+import com.example.rickmorty.data.locations.local.entities.ResidentsEntity
+import com.example.rickmorty.data.locations.padding.LocalLocationPagingSource
 import com.example.rickmorty.data.locations.padding.LocationPagingSource
 import com.example.rickmorty.domain.locations.LocationModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -30,29 +32,61 @@ class LocationsRepository @Inject constructor(
         type: String?,
         dimension: String?
     ): Flow<PagingData<LocationModel>> {
-        if (internetManager.isInternetConnected()) {
-            return Pager(config = PagingConfig(pageSize = 20, enablePlaceholders = false),
-                pagingSourceFactory = {
-                    locationPagingSource.getPagingLocations(
-                        name = name,
-                        type = type,
-                        dimension = dimension
+        val pagingSourceFactory: () -> PagingSource<Int, LocationModel> = {
+            if (internetManager.isInternetConnected()) {
+                locationPagingSource.getPagingLocations(
+                    name = name,
+                    type = type,
+                    dimension = dimension
+                )
+            } else {
+                LocalLocationPagingSource(locationsDao, name, type, dimension)
+            }
+        }
+        return Pager(
+            config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow.cachedIn(scope)
+    }
+
+    suspend fun getAboutLocationFromApi(id: Int): Flow<LocationModel> {
+        return if (internetManager.isInternetConnected()) {
+            flow {
+                try {
+                    val apiAboutLocation = api.getAboutLocation(id)
+                    if (locationsDao.searchById(id) == null) {
+                        locationsDao.insertAll(
+                            listOf(
+                                LocationEntity(
+                                    id = apiAboutLocation.id,
+                                    name = apiAboutLocation.name,
+                                    type = apiAboutLocation.type,
+                                    dimension = apiAboutLocation.dimension,
+                                    residents = ResidentsEntity(
+                                        apiAboutLocation.residents.map { it.extractLastPartToIntOrZero() }
+                                    )
+                                )
+                            )
+                        )
+                    }
+                    emit(
+                        LocationModel(
+                            id = apiAboutLocation.id,
+                            name = apiAboutLocation.name,
+                            type = apiAboutLocation.type,
+                            dimension = apiAboutLocation.dimension,
+                            residents = apiAboutLocation.residents.map { it.extractLastPartToIntOrZero() }
+                        )
                     )
-                }).flow.cachedIn(
-                scope
-            )
-        } else {
-            val filterLocationList = {
-                when {
-                    name != null -> locationsDao.searchByName(name)
-                    type != null -> locationsDao.searchByType(type)
-                    dimension != null -> locationsDao.searchByDimension(dimension)
-                    else -> locationsDao.getPagingList()
+                } catch (e: Exception) {
+                    throw Exception("Failed to fetch location from API", e)
                 }
-            }.asFlow()
-            return filterLocationList.flatMapConcat { locationsEntities ->
+            }
+        } else {
+            val locationEntity = locationsDao.searchById(id)
+            return if (locationEntity != null) {
                 flow {
-                    emit(PagingData.from(locationsEntities.map { locationEntity ->
+                    emit(
                         LocationModel(
                             id = locationEntity.id,
                             name = locationEntity.name,
@@ -60,24 +94,13 @@ class LocationsRepository @Inject constructor(
                             dimension = locationEntity.dimension,
                             residents = locationEntity.residents.residentsList
                         )
-                    }))
+                    )
+                }
+            } else {
+                flow {
+                    throw Exception("Location not found in the database")
                 }
             }
-        }
-    }
-
-    suspend fun getAboutLocationFromApi(id: Int): Flow<LocationModel> {
-        return flow {
-            val apiAboutLocation = api.getAboutLocation(id)
-            emit(
-                LocationModel(
-                    id = apiAboutLocation.id,
-                    name = apiAboutLocation.name,
-                    type = apiAboutLocation.type,
-                    dimension = apiAboutLocation.dimension,
-                    residents = apiAboutLocation.residents.map { it.extractLastPartToIntOrZero() }
-                )
-            )
         }
     }
 }

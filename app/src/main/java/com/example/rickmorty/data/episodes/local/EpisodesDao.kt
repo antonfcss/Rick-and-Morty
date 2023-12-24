@@ -19,4 +19,7 @@ interface EpisodesDao {
 
     @Query("SELECT * FROM episodes WHERE name LIKE :episode ORDER BY id ASC")
     fun searchByEpisode(episode: String): List<EpisodesEntity>
+
+    @Query("SELECT * FROM episodes WHERE id= :episodeId")
+    fun searchById(episodeId: Int): EpisodesEntity?
 }

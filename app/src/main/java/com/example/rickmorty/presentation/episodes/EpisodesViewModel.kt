@@ -68,4 +68,8 @@ class EpisodesViewModel @Inject constructor(private val episodesUseCase: Episode
                 }
         }
     }
+
+    fun onEmptyDataReceiver() {
+        showEmptyDataDialog("Received an empty list of locations")
+    }
 }

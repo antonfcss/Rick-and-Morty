@@ -14,6 +14,7 @@ import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.databinding.EpisodesFragmentBinding
 import com.example.rickmorty.presentation.episodes.dialog.EpisodeFilters
 import com.example.rickmorty.presentation.episodes.dialog.EpisodesDialogFragment
+import com.example.rickmorty.presentation.episodes.recycler.EpisodeItemDecoration
 import com.example.rickmorty.presentation.episodes.recycler.EpisodesAdapter
 import com.example.rickmorty.presentation.episodes.recycler.EpisodesLoadStateAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,10 +38,14 @@ class EpisodesFragment : BaseFragment<EpisodesFragmentBinding, EpisodesViewModel
             episodeRecyclerView.adapter = episodesAdapter.withLoadStateFooter(
                 EpisodesLoadStateAdapter()
             )
-            episodesAdapter.addLoadStateListener { state ->
-                val refreshState = state.refresh
-                episodeRecyclerView.isVisible = refreshState != LoadState.Loading
-                progress.isVisible = refreshState == LoadState.Loading
+            episodeRecyclerView.addItemDecoration(EpisodeItemDecoration(40, 20))
+            episodesAdapter.addLoadStateListener { loadState ->
+                val refreshState = loadState.refresh
+                binding.episodeRecyclerView.isVisible = refreshState != LoadState.Loading
+                binding.progress.isVisible = refreshState == LoadState.Loading
+                if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
+                    if (episodesAdapter.itemCount < 1) viewModel.onEmptyDataReceiver()
+                }
             }
             include.searchButton.setOnClickListener {
                 viewModel.getEpisodesListByQuery(include.searchView.query.toString())

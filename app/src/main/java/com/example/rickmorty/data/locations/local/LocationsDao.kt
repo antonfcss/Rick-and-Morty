@@ -23,4 +23,7 @@ interface LocationsDao {
 
     @Query("SELECT * FROM locations WHERE dimension LIKE :dimension ORDER BY id ASC")
     fun searchByDimension(dimension: String): List<LocationEntity>
+
+    @Query("SELECT * FROM locations WHERE id = :locationID ")
+    fun searchById(locationID: Int): LocationEntity?
 }

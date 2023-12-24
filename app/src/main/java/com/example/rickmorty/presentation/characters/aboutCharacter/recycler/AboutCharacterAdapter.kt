@@ -13,6 +13,8 @@ class AboutCharacterAdapter(
     private val onLocationClicked: (Int) -> Unit,
     private val onEpisodeClicked: (Int) -> Unit,
     private val onOriginClicked: (Int) -> Unit,
+    private val onBackClicked: () -> Unit
+
 ) :
     RecyclerView.Adapter<AboutCharacterViewHolder>() {
 
@@ -25,7 +27,7 @@ class AboutCharacterAdapter(
         notifyDataSetChanged()
     }
 
-    private companion object {
+    companion object {
         const val ABOUT_CHARACTER_DETAIL = 0
         const val ABOUT_CHARACTER_EPISODES = 1
     }
@@ -49,7 +51,8 @@ class AboutCharacterAdapter(
                     false
                 ),
                 onLocationClicked,
-                onOriginClicked
+                onOriginClicked,
+                onBackClicked
             )
 
             ABOUT_CHARACTER_EPISODES -> AboutCharacterEpisodesViewHolder(
