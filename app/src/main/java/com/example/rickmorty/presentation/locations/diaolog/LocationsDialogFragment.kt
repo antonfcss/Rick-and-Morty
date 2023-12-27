@@ -16,34 +16,38 @@ class LocationsDialogFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DialogFilterLocationsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    companion object {
+        private const val FILTER_LOCATION = "filter_location"
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val currentFilter = arguments?.getSerializable("filter_location") as LocationFilters?
+        val currentFilter = arguments?.getSerializable(FILTER_LOCATION) as LocationFilters?
         updateTextColor(currentFilter)
         with(binding) {
             nameFilterTextView.setOnClickListener {
                 setFragmentResult(
-                    "filter_location",
-                    bundleOf("filter_location" to LocationFilters.NAME)
+                    FILTER_LOCATION,
+                    bundleOf(FILTER_LOCATION to LocationFilters.NAME)
                 )
                 dismiss()
             }
             typeFilterTextView.setOnClickListener {
                 setFragmentResult(
-                    "filter_location",
-                    bundleOf("filter_location" to LocationFilters.TYPE)
+                    FILTER_LOCATION,
+                    bundleOf(FILTER_LOCATION to LocationFilters.TYPE)
                 )
                 dismiss()
             }
             dimensionFilterTextView.setOnClickListener {
                 setFragmentResult(
-                    "filter_location",
-                    bundleOf("filter_location" to LocationFilters.DIMENSION)
+                    FILTER_LOCATION,
+                    bundleOf(FILTER_LOCATION to LocationFilters.DIMENSION)
                 )
                 dismiss()
             }

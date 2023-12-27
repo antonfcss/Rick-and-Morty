@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class EpisodesUseCase @Inject constructor(private val episodesRepository: EpisodesRepository) {
-    suspend fun getPagingEpisodes(name: String?, episode: String?) =
+    fun getPagingEpisodes(name: String?, episode: String?) =
         episodesRepository.getPagingEpisodes(name = name, episode = episode)
 
     suspend fun getAboutEpisode(id: Int): Flow<EpisodesModel> {

@@ -52,7 +52,10 @@ class LocationsViewModel @Inject constructor(private val locationUseCase: Locati
     ) {
         launchIO {
             locationUseCase.getPagingLocations(name = name, type = type, dimension = dimension)
-                .catch { Log.d("LocationsViewModel", it.message.toString()) }
+                .catch {
+                    ViewState.Error(it.message.toString())
+                    Log.d("LocationsViewModel", it.message.toString())
+                }
                 .map { pagingData ->
                     pagingData.map { locationsModel ->
                         LocationUiModel(
@@ -62,7 +65,6 @@ class LocationsViewModel @Inject constructor(private val locationUseCase: Locati
                             dimension = locationsModel.dimension,
                         )
                     }
-
                 }
                 .collect { locationsList ->
                     updateState(

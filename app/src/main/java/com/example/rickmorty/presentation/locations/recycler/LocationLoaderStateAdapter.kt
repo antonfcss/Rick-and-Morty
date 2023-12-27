@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rickmorty.R
 import com.example.rickmorty.databinding.ItemErrorBinding
 import com.example.rickmorty.databinding.ItemProgressBinding
 
@@ -51,7 +52,6 @@ class LocationLoaderStateAdapter(
         }
 
         companion object {
-
             operator fun invoke(parent: ViewGroup): ProgressViewHolder {
                 return ProgressViewHolder(
                     ItemProgressBinding.inflate(
@@ -70,7 +70,7 @@ class LocationLoaderStateAdapter(
 
         override fun bind(loadState: LoadState) {
             require(loadState is LoadState.Error)
-            binding.errorMessage.text = loadState.error.localizedMessage
+            binding.errorMessage.setText(R.string.list_end)
         }
 
         companion object {

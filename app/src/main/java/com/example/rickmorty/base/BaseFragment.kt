@@ -39,7 +39,6 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<State>, State> 
         )
         return inflateMethod.invoke(null, inflater, container, false) as T
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -78,14 +77,11 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<State>, State> 
         when (viewState) {
             is ViewState.Success<State> -> renderSuccessState(viewState)
             is ViewState.Error -> renderErrorState(viewState)
-            is ViewState.Loading -> renderLoadingState(viewState)
         }
     }
 
     abstract fun renderSuccessState(viewState: ViewState.Success<State>)
 
     open fun renderErrorState(viewState: ViewState.Error) {}
-
-    open fun renderLoadingState(viewState: ViewState.Loading) {}
 
 }

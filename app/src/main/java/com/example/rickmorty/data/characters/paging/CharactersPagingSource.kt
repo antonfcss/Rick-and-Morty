@@ -2,7 +2,6 @@ package com.example.rickmorty.data.characters.paging
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
 import androidx.paging.PagingSource
@@ -11,10 +10,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.rickmorty.R
-import com.example.rickmorty.base.BaseSource
-import com.example.rickmorty.base.Results
 import com.example.rickmorty.base.extractLastPartToInt
-import com.example.rickmorty.data.RickAndMortyApi
+import com.example.rickmorty.data.characters.api.CharactersApi
 import com.example.rickmorty.data.characters.local.CharactersDao
 import com.example.rickmorty.data.characters.local.entities.CharacterEntity
 import com.example.rickmorty.data.characters.local.entities.CharacterEpisodesEntity
@@ -25,125 +22,99 @@ import com.example.rickmorty.domain.characters.LocationModel
 import com.example.rickmorty.domain.characters.OriginModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okio.IOException
-import retrofit2.HttpException
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import javax.inject.Inject
 
 class CharactersPagingSource @Inject constructor(
-    private val baseSource: BaseSource,
+    private val charactersApi: CharactersApi,
     private val context: Context,
     private val charactersDao: CharactersDao,
-    private val api: RickAndMortyApi
-) : BaseSource by baseSource {
-
-    fun getPagingCharacters(
-        name: String?,
-        status: String?,
-        species: String?,
-    ): PagingSource<Int, CharactersModel> {
-        return object : PagingSource<Int, CharactersModel>() {
-
-
-            override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CharactersModel> {
-                val position = params.key ?: 0
-                return try {
-                    when (val response = oneShotCalls {
-                        api.getCharacterList(
-                            page = position + 1,
-                            name = name,
-                            status = status,
-                            species = species,
+    private val name: String?,
+    private val status: String?,
+    private val species: String?
+) : PagingSource<Int, CharactersModel>() {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CharactersModel> {
+        val position = params.key ?: 0
+        val response = try {
+            charactersApi.getCharacterList(
+                page = position + 1,
+                name = name,
+                status = status,
+                species = species,
+            )
+        } catch (e: Exception) {
+            return LoadResult.Error(e)
+        }
+        val charactersModelList =
+            response.charactersResultsList.map { charactersApiModel ->
+                CharactersModel(
+                    id = charactersApiModel.id,
+                    name = charactersApiModel.name,
+                    status = charactersApiModel.status,
+                    species = charactersApiModel.species,
+                    type = charactersApiModel.type,
+                    gender = charactersApiModel.gender,
+                    origin = if (charactersApiModel.originApi.url.isNotEmpty()) {
+                        OriginModel(
+                            name = charactersApiModel.originApi.originName,
+                            id = charactersApiModel.originApi.url.extractLastPartToInt(),
                         )
+                    } else null,
+                    location = if (charactersApiModel.locationApi.url.isNotEmpty()) {
+                        LocationModel(
+                            name = charactersApiModel.locationApi.locationName,
+                            id = charactersApiModel.locationApi.url.extractLastPartToInt()
+                        )
+                    } else null,
+                    image = getImageFromRemote(
+                        context, charactersApiModel.image
+                    ),
+                    episode = charactersApiModel.episode.map {
+                        it.extractLastPartToInt()
                     }
-                    ) {
-                        is Results.Success -> {
-                            val charactersModelList =
-                                response.data.charactersResultsList.map { charactersApiModel ->
-                                    CharactersModel(
-                                        id = charactersApiModel.id,
-                                        name = charactersApiModel.name,
-                                        status = charactersApiModel.status,
-                                        species = charactersApiModel.species,
-                                        type = charactersApiModel.type,
-                                        gender = charactersApiModel.gender,
-                                        origin = if (charactersApiModel.originApi.url.isNotEmpty()) {
-                                            OriginModel(
-                                                name = charactersApiModel.originApi.originName,
-                                                id = charactersApiModel.originApi.url.extractLastPartToInt(),
-                                            )
-                                        } else null,
-                                        location = if (charactersApiModel.locationApi.url.isNotEmpty()) {
-                                            LocationModel(
-                                                name = charactersApiModel.locationApi.locationName,
-                                                id = charactersApiModel.locationApi.url.extractLastPartToInt()
-                                            )
-                                        } else null,
-                                        image = getImageFromRemote(
-                                            context, charactersApiModel.image
-                                        ),
-                                        episode = charactersApiModel.episode.map {
-                                            it.extractLastPartToInt()
-                                        }
-                                    )
-                                }
-                            withContext(Dispatchers.IO) {
-                                charactersDao.insertAll(charactersModelList.map { characterModel ->
-                                    val path = saveToInternalStorage(
-                                        characterModel.image, characterModel.id
-                                    )
-                                    CharacterEntity(
-                                        id = characterModel.id,
-                                        name = characterModel.name,
-                                        status = characterModel.status,
-                                        species = characterModel.species,
-                                        type = characterModel.type,
-                                        gender = characterModel.gender,
-                                        origin = OriginEntity(
-                                            name = characterModel.origin?.name ?: "",
-                                            id = characterModel.origin?.id ?: 0
-                                        ),
-                                        location = CharacterLocationEntity(
-                                            name = characterModel.location?.name ?: "",
-                                            id = characterModel.location?.id ?: 0
-                                        ),
-                                        image = path,
-                                        episode = CharacterEpisodesEntity(characterModel.episode),
-                                    )
-                                })
-                            }
-                            if (charactersModelList.isEmpty()) {
-                                LoadResult.Error(Throwable("Empty data"))
-                            } else {
-                                LoadResult.Page(
-                                        data = charactersModelList,
-                                        prevKey = if (position == 0) null else position - 1,
-                                        nextKey = if (response.data.charactersResultsList.isEmpty()) null else position + 1
-                                    )
-                                }
-                            }
-
-                            is Results.Error -> {
-                                LoadResult.Error(response.exception)
-                            }
-                        }
-                    } catch (exception: IOException) {
-                        LoadResult.Error(exception)
-                    } catch (exception: HttpException) {
-                        LoadResult.Error(exception)
-                    }
-
+                )
             }
+        withContext(Dispatchers.IO) {
+            charactersDao.insertAll(charactersModelList.map { characterModel ->
+                val path = saveToInternalStorage(
+                    characterModel.image, characterModel.id
+                )
+                CharacterEntity(
+                    id = characterModel.id,
+                    name = characterModel.name,
+                    status = characterModel.status,
+                    species = characterModel.species,
+                    type = characterModel.type,
+                    gender = characterModel.gender,
+                    origin = OriginEntity(
+                        name = characterModel.origin?.name ?: "",
+                        id = characterModel.origin?.id ?: 0
+                    ),
+                    location = CharacterLocationEntity(
+                        name = characterModel.location?.name ?: "",
+                        id = characterModel.location?.id ?: 0
+                    ),
+                    image = path,
+                    episode = CharacterEpisodesEntity(characterModel.episode),
+                )
+            })
+        }
+        return if (charactersModelList.isEmpty()) {
+            LoadResult.Error(Throwable("Empty data"))
+        } else {
+            LoadResult.Page(
+                data = charactersModelList,
+                prevKey = if (position == 0) null else position - 1,
+                nextKey = if (response.charactersResultsList.isEmpty()) null else position + 1
+            )
+        }
+    }
 
-            override fun getRefreshKey(state: PagingState<Int, CharactersModel>): Int? {
-                return state.anchorPosition?.let { anchorPosition ->
-                    state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                        ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
-                }
-            }
+    override fun getRefreshKey(state: PagingState<Int, CharactersModel>): Int? {
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
         }
     }
 
@@ -193,17 +164,6 @@ class CharactersPagingSource @Inject constructor(
             placeholderDrawable.setBounds(0, 0, canvas.width, canvas.height)
             placeholderDrawable.draw(canvas)
             bitmap
-        }
-    }
-
-    private fun loadImageFromStorage(id: Int): Bitmap {
-        return try {
-            val path = "/data/data/${context.packageName}/app_imageDir/$id.jpg"
-            val file = File(path)
-            BitmapFactory.decodeStream(FileInputStream(file))
-        } catch (e: FileNotFoundException) {
-            BitmapFactory.decodeResource(context.resources, R.drawable.placeholder_image)
-                ?: Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565)
         }
     }
 

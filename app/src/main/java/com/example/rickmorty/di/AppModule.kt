@@ -43,11 +43,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideEpisodesDao(db: RickAndMortyDatabase) = db.episodesDao()
-
     @Provides
     @Singleton
     fun provideCoroutineScope(): CoroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
-
 }
