@@ -12,32 +12,35 @@ import com.example.rickmorty.databinding.DialogFilterEpisodesFragmentBinding
 
 class EpisodesDialogFragment : DialogFragment() {
     private lateinit var binding: DialogFilterEpisodesFragmentBinding
+companion object {
+    private const val FILTER_EPISODE = "filter_episodes"
+}
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DialogFilterEpisodesFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val currentFilter = arguments?.getSerializable("filter_episodes") as EpisodeFilters?
+        val currentFilter = arguments?.getSerializable(FILTER_EPISODE) as EpisodeFilters?
         updateTextColor(currentFilter)
         with(binding) {
             nameFilterTextView.setOnClickListener {
                 setFragmentResult(
-                    "filter_episodes",
-                    bundleOf("filter_episodes" to EpisodeFilters.NAME)
+                    FILTER_EPISODE,
+                    bundleOf(FILTER_EPISODE to EpisodeFilters.NAME)
                 )
                 dismiss()
             }
             episodeFilterTextView.setOnClickListener {
                 setFragmentResult(
-                    "filter_episodes",
-                    bundleOf("filter_episodes" to EpisodeFilters.EPISODE)
+                    FILTER_EPISODE,
+                    bundleOf(FILTER_EPISODE to EpisodeFilters.EPISODE)
                 )
                 dismiss()
             }

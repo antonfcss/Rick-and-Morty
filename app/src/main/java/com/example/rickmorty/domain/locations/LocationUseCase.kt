@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class LocationUseCase @Inject constructor(private val locationsRepository: LocationsRepository) {
 
-    suspend fun getPagingLocations(
+    fun getPagingLocations(
         name: String?,
         type: String?,
         dimension: String?

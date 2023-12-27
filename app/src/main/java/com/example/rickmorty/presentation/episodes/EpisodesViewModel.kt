@@ -1,6 +1,5 @@
 package com.example.rickmorty.presentation.episodes
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.map
@@ -46,7 +45,9 @@ class EpisodesViewModel @Inject constructor(private val episodesUseCase: Episode
     private fun loadEpisodesList(name: String?, episode: String?) {
         launchIO {
             episodesUseCase.getPagingEpisodes(name = name, episode = episode)
-                .catch { Log.d("EpisodesViewModel", it.message.toString()) }
+                .catch {
+                    ViewState.Error(it.message.toString())
+                }
                 .map { pagingData ->
                     pagingData.map { episodesModel ->
                         EpisodesUiModel(

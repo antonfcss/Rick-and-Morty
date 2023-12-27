@@ -1,0 +1,3 @@
+package com.example.rickmorty.presentation.aboutCharacter.recycler.model
+
+sealed class AboutCharacterRecyclerModel

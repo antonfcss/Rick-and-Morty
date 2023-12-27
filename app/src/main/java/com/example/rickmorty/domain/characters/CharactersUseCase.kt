@@ -8,7 +8,7 @@ class CharactersUseCase @Inject constructor(
     private val charactersListRepository: CharactersListRepository
 ) {
 
-    suspend fun getPagingCharacters(
+    fun getPagingCharacters(
         name: String?,
         status: String?,
         species: String?,

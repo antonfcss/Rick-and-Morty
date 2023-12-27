@@ -8,15 +8,15 @@ import androidx.core.content.ContextCompat
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.rickmorty.R
 import com.example.rickmorty.base.extractLastPartToIntOrZero
 import com.example.rickmorty.data.InternetManager
-import com.example.rickmorty.data.RickAndMortyApi
+import com.example.rickmorty.data.characters.api.CharactersApi
 import com.example.rickmorty.data.characters.local.CharactersDao
 import com.example.rickmorty.data.characters.local.entities.CharacterEntity
 import com.example.rickmorty.data.characters.local.entities.CharacterEpisodesEntity
@@ -31,6 +31,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
@@ -39,11 +40,10 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 
 class CharactersListRepository @Inject constructor(
-    private val api: RickAndMortyApi,
+    private val charactersApi: CharactersApi,
     private val context: Context,
     private val internetManager: InternetManager,
     private val charactersDao: CharactersDao,
-    private val charactersPagingSource: CharactersPagingSource,
     private val scope: CoroutineScope
 ) {
 
@@ -51,108 +51,133 @@ class CharactersListRepository @Inject constructor(
         name: String?,
         status: String?,
         species: String?,
-    ): Flow<PagingData<CharactersModel>> {
-        val pagingSourceFactory: () -> PagingSource<Int, CharactersModel> = {
-            if (internetManager.isInternetConnected()) {
-                charactersPagingSource.getPagingCharacters(
-                    name = name,
-                    status = status,
-                    species = species
-                )
-            } else {
-                LocalCharacterPagingSource(charactersDao, context, name, status, species)
-            }
+    ): Flow<PagingData<CharactersModel>> =
+        if (internetManager.isInternetConnected()) {
+            Pager(
+                config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+                pagingSourceFactory = {
+                    CharactersPagingSource(
+                        charactersApi,
+                        context,
+                        charactersDao,
+                        name,
+                        status,
+                        species
+                    )
+                }
+            ).flow.cachedIn(scope)
+        } else {
+            Pager(
+                config = PagingConfig(pageSize = 20, enablePlaceholders = false),
+                pagingSourceFactory = {
+                    LocalCharacterPagingSource(
+                        charactersDao,
+                        name,
+                        status,
+                        species
+                    )
+                }
+            ).flow.map {
+                it.map { characterEntity ->
+                    CharactersModel(
+                        id = characterEntity.id,
+                        name = characterEntity.name,
+                        status = characterEntity.status,
+                        species = characterEntity.species,
+                        type = characterEntity.type,
+                        gender = characterEntity.gender,
+                        origin = OriginModel(
+                            name = characterEntity.origin?.name ?: "",
+                            id = characterEntity.origin?.id ?: 0,
+                        ),
+                        location = LocationModel(
+                            name = characterEntity.location?.name ?: "",
+                            id = characterEntity.location?.id ?: 0
+                        ),
+                        image = loadImageFromStorage(characterEntity.id),
+                        episode = characterEntity.episode.episodesList
+                    )
+                }
+            }.cachedIn(scope)
         }
 
-        return Pager(
-            config = PagingConfig(pageSize = 20, enablePlaceholders = false),
-            pagingSourceFactory = pagingSourceFactory
-        ).flow.cachedIn(scope)
-    }
-    suspend fun getAboutCharacterFromApi(id: Int): Flow<CharactersModel> {
-        return if (internetManager.isInternetConnected()) {
-            flow {
-                val apiAboutCharacter = api.getAboutCharacter(id)
-                if (charactersDao.searchById(id) == null) {
-                    val imagePath = saveToInternalStorage(
-                        getImageFromRemote(context, apiAboutCharacter.image),
-                        id
+
+    suspend fun getAboutCharacterFromApi(id: Int): Flow<CharactersModel> = flow {
+        if (internetManager.isInternetConnected()) {
+            val apiAboutCharacter = charactersApi.getAboutCharacter(id)
+            val imagePath = saveToInternalStorage(
+                getImageFromRemote(context, apiAboutCharacter.image),
+                id
+            )
+            charactersDao.insert(
+                CharacterEntity(
+                    id = apiAboutCharacter.id,
+                    name = apiAboutCharacter.name,
+                    status = apiAboutCharacter.status,
+                    species = apiAboutCharacter.species,
+                    type = apiAboutCharacter.type,
+                    gender = apiAboutCharacter.gender,
+                    origin = OriginEntity(
+                        name = apiAboutCharacter.originApi.originName,
+                        id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
+                    ),
+                    location = CharacterLocationEntity(
+                        name = apiAboutCharacter.locationApi.locationName,
+                        id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
+                    ),
+                    image = imagePath,
+                    episode = CharacterEpisodesEntity(
+                        apiAboutCharacter.episode.map { it.extractLastPartToIntOrZero() }
                     )
-                    charactersDao.insertAll(
-                        listOf(
-                            CharacterEntity(
-                                id = apiAboutCharacter.id,
-                                name = apiAboutCharacter.name,
-                                status = apiAboutCharacter.status,
-                                species = apiAboutCharacter.species,
-                                type = apiAboutCharacter.type,
-                                gender = apiAboutCharacter.gender,
-                                origin = OriginEntity(
-                                    name = apiAboutCharacter.originApi.originName,
-                                    id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
-                                ),
-                                location = CharacterLocationEntity(
-                                    name = apiAboutCharacter.locationApi.locationName,
-                                    id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
-                                ),
-                                image = imagePath,
-                                episode = CharacterEpisodesEntity(
-                                    apiAboutCharacter.episode.map { it.extractLastPartToIntOrZero() }
-                                )
-                            )))
-                }
-                emit(
-                    CharactersModel(
-                        id = apiAboutCharacter.id,
-                        name = apiAboutCharacter.name,
-                        status = apiAboutCharacter.status,
-                        species = apiAboutCharacter.species,
-                        type = apiAboutCharacter.type,
-                        gender = apiAboutCharacter.gender,
-                        origin = if (apiAboutCharacter.originApi.url.isNotEmpty()) {
-                            OriginModel(
-                                name = apiAboutCharacter.originApi.originName,
-                                id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
-                            )
-                        } else null,
-                        location = if (apiAboutCharacter.locationApi.url.isNotEmpty()) {
-                            LocationModel(
-                                name = apiAboutCharacter.locationApi.locationName,
-                                id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
-                            )
-                        } else null,
-                        image = loadImageFromStorage(id),
-                        episode = apiAboutCharacter.episode.map { it.extractLastPartToIntOrZero() }
-                    )
+                ))
+
+            emit(
+                CharactersModel(
+                    id = apiAboutCharacter.id,
+                    name = apiAboutCharacter.name,
+                    status = apiAboutCharacter.status,
+                    species = apiAboutCharacter.species,
+                    type = apiAboutCharacter.type,
+                    gender = apiAboutCharacter.gender,
+                    origin = if (apiAboutCharacter.originApi.url.isNotEmpty()) {
+                        OriginModel(
+                            name = apiAboutCharacter.originApi.originName,
+                            id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
+                        )
+                    } else null,
+                    location = if (apiAboutCharacter.locationApi.url.isNotEmpty()) {
+                        LocationModel(
+                            name = apiAboutCharacter.locationApi.locationName,
+                            id = apiAboutCharacter.locationApi.url.extractLastPartToIntOrZero()
+                        )
+                    } else null,
+                    image = loadImageFromStorage(id),
+                    episode = apiAboutCharacter.episode.map { it.extractLastPartToIntOrZero() }
                 )
-            }
+            )
         } else {
             val characterEntity = charactersDao.searchById(id)
             characterEntity?.let {
-                flow {
-                    emit(
-                        CharactersModel(
-                            id = it.id,
-                            name = it.name,
-                            status = it.status,
-                            species = it.species,
-                            type = it.type,
-                            gender = it.gender,
-                            origin = OriginModel(
-                                name = it.origin?.name ?: "",
-                                id = it.origin?.id ?: 0,
-                            ),
-                            location = LocationModel(
-                                name = it.location?.name ?: "",
-                                id = it.location?.id ?: 0
-                            ),
-                            image = loadImageFromStorage(it.id),
-                            episode = it.episode.episodesList
-                        )
+                emit(
+                    CharactersModel(
+                        id = it.id,
+                        name = it.name,
+                        status = it.status,
+                        species = it.species,
+                        type = it.type,
+                        gender = it.gender,
+                        origin = OriginModel(
+                            name = it.origin?.name ?: "",
+                            id = it.origin?.id ?: 0,
+                        ),
+                        location = LocationModel(
+                            name = it.location?.name ?: "",
+                            id = it.location?.id ?: 0
+                        ),
+                        image = loadImageFromStorage(it.id),
+                        episode = it.episode.episodesList
                     )
-                }
-            } ?: flow {
-                throw Exception("We're having trouble with the database Character")
+                )
             }
         }
     }

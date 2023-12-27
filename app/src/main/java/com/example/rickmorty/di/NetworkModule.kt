@@ -1,6 +1,8 @@
 package com.example.rickmorty.di
 
-import com.example.rickmorty.data.RickAndMortyApi
+import com.example.rickmorty.data.characters.api.CharactersApi
+import com.example.rickmorty.data.episodes.api.EpisodesApi
+import com.example.rickmorty.data.locations.api.LocationsApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +33,17 @@ object NetworkModule {
     }
 
     @Provides
-    fun provideProgramApi(retrofit: Retrofit): RickAndMortyApi {
-        return retrofit.create(RickAndMortyApi::class.java)
+    fun provideCharacterApi(retrofit: Retrofit): CharactersApi {
+        return retrofit.create(CharactersApi::class.java)
+    }
+
+    @Provides
+    fun provideEpisodesApi(retrofit: Retrofit): EpisodesApi {
+        return retrofit.create(EpisodesApi::class.java)
+    }
+
+    @Provides
+    fun provideLocationsApi(retrofit: Retrofit): LocationsApi {
+        return retrofit.create(LocationsApi::class.java)
     }
 }

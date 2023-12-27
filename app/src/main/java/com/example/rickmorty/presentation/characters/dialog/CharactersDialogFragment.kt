@@ -13,11 +13,15 @@ import com.example.rickmorty.databinding.DialogFilterCharactersFragmentBinding
 class CharactersDialogFragment : DialogFragment() {
     private lateinit var binding: DialogFilterCharactersFragmentBinding
 
+    companion object {
+        private const val FILTER_CHARACTER = "filter_character"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DialogFilterCharactersFragmentBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -25,27 +29,27 @@ class CharactersDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val currentFilter = arguments?.getSerializable("filter") as CharacterFilters?
+        val currentFilter = arguments?.getSerializable(FILTER_CHARACTER) as CharacterFilters?
         updateTextColor(currentFilter)
         with(binding) {
             nameFilterTextView.setOnClickListener {
                 setFragmentResult(
-                    "filter",
-                    bundleOf("filter" to CharacterFilters.NAME)
+                    FILTER_CHARACTER,
+                    bundleOf(FILTER_CHARACTER to CharacterFilters.NAME)
                 )
                 dismiss()
             }
             statusFilterTextView.setOnClickListener {
                 setFragmentResult(
-                    "filter",
-                    bundleOf("filter" to CharacterFilters.STATUS)
+                    FILTER_CHARACTER,
+                    bundleOf(FILTER_CHARACTER to CharacterFilters.STATUS)
                 )
                 dismiss()
             }
             speciesFilterTextView.setOnClickListener {
                 setFragmentResult(
-                    "filter",
-                    bundleOf("filter" to CharacterFilters.SPECIES)
+                    FILTER_CHARACTER,
+                    bundleOf(FILTER_CHARACTER to CharacterFilters.SPECIES)
                 )
                 dismiss()
             }

@@ -69,7 +69,7 @@ class CharactersLoaderStateAdapter :
 
         override fun bind(loadState: LoadState) {
             require(loadState is LoadState.Error)
-            binding.errorMessage.text = loadState.error.localizedMessage
+            binding.errorMessage.text = "Результаты не найдены"
         }
 
         companion object {

@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/aboutCharacterFragment"
-        android:name="com.example.rickmorty.presentation.characters.aboutCharacter.AboutCharacterFragment"
+        android:name="com.example.rickmorty.presentation.aboutCharacter.AboutCharacterFragment"
         android:label="AboutCharacterFragment"
         tools:layout="@layout/about_character_fragment">
         <action
@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/aboutEpisodeFragment"
-        android:name="com.example.rickmorty.presentation.episodes.aboutEpisode.AboutEpisodeFragment"
+        android:name="com.example.rickmorty.presentation.aboutEpisode.AboutEpisodeFragment"
         android:label="AboutEpisodeFragment"
         tools:layout="@layout/about_episode_fragment">
         <action
@@ -55,7 +55,7 @@
     </fragment>
     <fragment
         android:id="@+id/aboutLocationFragment"
-        android:name="com.example.rickmorty.presentation.locations.aboutLocation.AboutLocationFragment"
+        android:name="com.example.rickmorty.presentation.aboutLocation.AboutLocationFragment"
         android:label="AboutLocationFragment"
         tools:layout="@layout/about_locatio_fragment">
         <action

@@ -1,5 +1,6 @@
 package com.example.rickmorty.data.locations.local
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,17 +13,20 @@ interface LocationsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(locationEntity: List<LocationEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(locationEntity: LocationEntity)
+
     @Query("SELECT * FROM locations ORDER BY id ASC")
-    fun getPagingList(): List<LocationEntity>
+    fun getPagingList(): PagingSource<Int, LocationEntity>
 
     @Query("SELECT * FROM locations WHERE name LIKE :name ORDER BY id ASC")
-    fun searchByName(name: String): List<LocationEntity>
+    fun searchByName(name: String): PagingSource<Int, LocationEntity>
 
     @Query("SELECT * FROM locations WHERE type LIKE :type ORDER BY id ASC")
-    fun searchByType(type: String): List<LocationEntity>
+    fun searchByType(type: String): PagingSource<Int, LocationEntity>
 
     @Query("SELECT * FROM locations WHERE dimension LIKE :dimension ORDER BY id ASC")
-    fun searchByDimension(dimension: String): List<LocationEntity>
+    fun searchByDimension(dimension: String): PagingSource<Int, LocationEntity>
 
     @Query("SELECT * FROM locations WHERE id = :locationID ")
     fun searchById(locationID: Int): LocationEntity?

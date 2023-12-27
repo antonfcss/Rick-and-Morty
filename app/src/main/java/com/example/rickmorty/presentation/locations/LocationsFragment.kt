@@ -7,28 +7,57 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.example.rickmorty.R
 import com.example.rickmorty.base.BaseFragment
 import com.example.rickmorty.base.ViewState
 import com.example.rickmorty.databinding.LocationsFragmentBinding
+import com.example.rickmorty.presentation.MyItemDecoration
 import com.example.rickmorty.presentation.locations.diaolog.LocationFilters
 import com.example.rickmorty.presentation.locations.diaolog.LocationsDialogFragment
-import com.example.rickmorty.presentation.locations.recycler.LocationItemDecoration
 import com.example.rickmorty.presentation.locations.recycler.LocationLoaderStateAdapter
 import com.example.rickmorty.presentation.locations.recycler.LocationsAdapter
+import com.shashank.sony.fancytoastlib.FancyToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LocationsFragment :
     BaseFragment<LocationsFragmentBinding, LocationsViewModel, LocationsState>() {
+    companion object {
+        private const val FILTER_LOCATION = "filter_location"
+        private const val BUNDLE_LOCATION = "id_location"
+        private const val TAG_LOCATION = "tag_location"
+        private const val VALUE_ONE = 1
+        private const val ITEM_DECORATION_SPACING = 40
+        private const val ITEM_DECORATION_BOTTOM = 20
+    }
+
     private val locationsAdapter: LocationsAdapter by lazy {
         LocationsAdapter {
             findNavController().navigate(
-                R.id.action_locationsFragment_to_aboutLocationFragment,
-                bundleOf("id_location" to it)
+                R.id.aboutLocationFragment,
+                bundleOf(BUNDLE_LOCATION to it)
             )
+        }
+    }
+
+    private val loadStateListener = { loadState: CombinedLoadStates ->
+        val refreshState = loadState.refresh
+        binding.locationsRecyclerView.isVisible = refreshState != LoadState.Loading
+        binding.progress.isVisible = refreshState == LoadState.Loading
+        if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
+            if (locationsAdapter.itemCount < VALUE_ONE) viewModel.onEmptyDataReceiver()
+        }
+        if (loadState.source.refresh is LoadState.Error) {
+            FancyToast.makeText(
+                requireContext(),
+                "Sorry, nothing found. Try again!",
+                FancyToast.LENGTH_LONG,
+                FancyToast.ERROR,
+                true
+            ).show()
         }
     }
 
@@ -39,15 +68,12 @@ class LocationsFragment :
             locationsRecyclerView.adapter = locationsAdapter.withLoadStateFooter(
                 LocationLoaderStateAdapter()
             )
-            locationsRecyclerView.addItemDecoration(LocationItemDecoration(40, 20))
-            locationsAdapter.addLoadStateListener { loadState ->
-                val refreshState = loadState.refresh
-                binding.locationsRecyclerView.isVisible = refreshState != LoadState.Loading
-                binding.progress.isVisible = refreshState == LoadState.Loading
-                if (loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached) {
-                    if (locationsAdapter.itemCount < 1) viewModel.onEmptyDataReceiver()
-                }
-            }
+            locationsRecyclerView.addItemDecoration(
+                MyItemDecoration(
+                    ITEM_DECORATION_SPACING,
+                    ITEM_DECORATION_BOTTOM
+                )
+            )
             include.searchButton.setOnClickListener {
                 viewModel.getLocationsListByQuery(include.searchView.query.toString())
             }
@@ -60,22 +86,31 @@ class LocationsFragment :
             viewModel.getFilterLiveData().observe(viewLifecycleOwner) { filter ->
                 filter?.let { locationFilter ->
                     val dialogFragment = LocationsDialogFragment()
-                    val bundle = bundleOf("filter_location" to locationFilter)
+                    val bundle = bundleOf(FILTER_LOCATION to locationFilter)
                     dialogFragment.arguments = bundle
                     viewModel.postFilterClicked()
-                    dialogFragment.show(parentFragmentManager, "tag_location")
-
+                    dialogFragment.show(parentFragmentManager, TAG_LOCATION)
                 }
             }
         }
         viewModel.getLocationList()
-        setFragmentResultListener("filter_location") { key, bundle ->
-            if (key == "filter_location") {
+        setFragmentResultListener(FILTER_LOCATION) { key, bundle ->
+            if (key == FILTER_LOCATION) {
                 viewModel.setFilter(
-                    bundle.getSerializable("filter_location") as LocationFilters
+                    bundle.getSerializable(FILTER_LOCATION) as LocationFilters
                 )
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        locationsAdapter.addLoadStateListener(loadStateListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        locationsAdapter.removeLoadStateListener(loadStateListener)
     }
 
     override fun renderSuccessState(viewState: ViewState.Success<LocationsState>) {
@@ -83,5 +118,10 @@ class LocationsFragment :
             locationsAdapter.submitData(viewState.data.locationList)
         }
         binding.swipeToRefresh.isRefreshing = false
+    }
+
+    override fun renderErrorState(viewState: ViewState.Error) {
+        super.renderErrorState(viewState)
+        binding.locationsRecyclerView.isVisible = false
     }
 }
